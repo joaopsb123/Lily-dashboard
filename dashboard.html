@@ -2,33 +2,52 @@
 <html>
 <head>
   <title>Lily Bot - Dashboard</title>
-  <style>
-    body {
-      background: #2f3136;
-      color: white;
-      font-family: Arial;
-      text-align: center;
-      padding-top: 50px;
-    }
-    .user-card {
-      background: #36393f;
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    .user-avatar {
-      width: 100px;
-      border-radius: 50%;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="user-card" id="dashboard">
-    <h1>Carregando...</h1>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="user-profile">
+        <img id="user-avatar" src="" alt="Avatar">
+        <h2 id="username"></h2>
+        <p id="user-email"></p>
+      </div>
+      
+      <nav>
+        <a href="#" class="active"><i class="icon">⚙️</i> Configurações</a>
+        <a href="#"><i class="icon">🤖</i> Comandos</a>
+        <a href="#"><i class="icon">🔔</i> Notificações</a>
+        <button class="logout-btn" onclick="logout()">Sair</button>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <h1><i class="icon">🎛️</i> Dashboard Lily Bot</h1>
+      
+      <!-- Seção Servidores -->
+      <div class="card">
+        <h2><i class="icon">🏰</i> Seus Servidores</h2>
+        <div class="servers-grid" id="servers-list">
+          <!-- Servidores aparecerão aqui via JS -->
+        </div>
+      </div>
+
+      <!-- Controles do Bot -->
+      <div class="card">
+        <h2><i class="icon">🛠️</i> Controles Rápidos</h2>
+        <div class="controls">
+          <button class="control-btn"><i class="icon">▶️</i> Iniciar Bot</button>
+          <button class="control-btn"><i class="icon">⏸️</i> Pausar</button>
+          <button class="control-btn"><i class="icon">🔄</i> Atualizar</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
+    // Processa autenticação
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
 
@@ -37,22 +56,28 @@
     } else {
       fetch(`/api/auth?code=${code}`)
         .then(res => res.json())
-        .then(user => {
-          document.getElementById('dashboard').innerHTML = `
-            <h1>🛠️ Dashboard Lily</h1>
-            <img src="${user.avatar}" class="user-avatar">
-            <h2>${user.username}</h2>
-            <p>${user.email || 'Email privado'}</p>
-            <button onclick="window.location.href='/'">Sair</button>
-          `;
-        })
-        .catch(err => {
-          document.getElementById('dashboard').innerHTML = `
-            <h1 style="color: #ff6b6b;">Erro!</h1>
-            <p>${err.message}</p>
-            <button onclick="window.location.href='/'">Voltar</button>
-          `;
+        .then(data => {
+          // Preenche dados do usuário
+          document.getElementById('user-avatar').src = data.user.avatar;
+          document.getElementById('username').textContent = data.user.username;
+          document.getElementById('user-email').textContent = data.user.email;
+          
+          // Preenche servidores
+          const serversList = document.getElementById('servers-list');
+          data.guilds.forEach(guild => {
+            serversList.innerHTML += `
+              <div class="server-card">
+                <img src="${guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png` : 'https://i.imgur.com/SEU_ICONE_PADRAO.png'}" alt="${guild.name}">
+                <h3>${guild.name}</h3>
+                <button class="manage-btn">Gerenciar</button>
+              </div>
+            `;
+          });
         });
+    }
+
+    function logout() {
+      window.location.href = '/';
     }
   </script>
 </body>
