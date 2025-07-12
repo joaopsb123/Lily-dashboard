@@ -51,9 +51,7 @@
   <script>
     // 1. Configura Login
     document.getElementById("loginBtn").onclick = () => {
-      window.location.href = "https://discord.com/oauth2/authorize?client_id=1388158298305597483&response_type=code&redirect_uri=" + 
-        encodeURIComponent(window.location.origin) + 
-        "&scope=identify+email+guilds";
+      window.location.href = "https://discord.com/oauth2/authorize?client_id=1388158298305597483&response_type=code&redirect_uri=https%3A%2F%2Flily-dashboard2.vercel.app%2F&scope=identify+email+guilds";
     };
 
     // 2. Processa Retorno após Login
