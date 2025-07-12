@@ -3,34 +3,51 @@
 <head>
   <title>Lily Bot - Dashboard</title>
   <style>
-    body { background: #1e1f22; color: white; font-family: Arial; }
-    .user-card {
-      background: #2b2d31;
-      width: 300px;
-      margin: 50px auto;
-      padding: 20px;
-      border-radius: 10px;
+    body {
+      background: #2f3136;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+      padding-top: 50px;
     }
-    .user-avatar { width: 80px; border-radius: 50%; }
+    .user-card {
+      background: #36393f;
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .user-avatar {
+      width: 100px;
+      border-radius: 50%;
+    }
   </style>
 </head>
 <body>
   <div class="user-card">
-    <img id="user-avatar" class="user-avatar" src="">
-    <h2 id="username">Carregando...</h2>
-    <button onclick="logout()">Sair</button>
+    <h1>Dashboard Lily Bot</h1>
+    <img id="avatar" class="user-avatar" src="">
+    <h2 id="username"></h2>
+    <p id="email"></p>
   </div>
 
   <script>
-    // Pegar dados do usuário (simplificado)
-    if (window.location.hash) {
-      const params = new URLSearchParams(window.location.hash.substring(1));
-      document.getElementById('username').textContent = params.get('username');
-      document.getElementById('user-avatar').src = params.get('avatar_url');
-    }
+    // Processa o código retornado pelo Discord
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
 
-    function logout() {
-      window.location.href = '/';
+    if (code) {
+      fetch(`/api/auth?code=${code}`)
+        .then(response => response.json())
+        .then(user => {
+          document.getElementById('username').textContent = user.username;
+          document.getElementById('email').textContent = user.email;
+          document.getElementById('avatar').src = user.avatar;
+        })
+        .catch(error => {
+          console.error('Erro:', error);
+          document.getElementById('username').textContent = 'Erro ao carregar dados';
+        });
     }
   </script>
 </body>
