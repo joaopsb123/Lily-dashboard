@@ -2,40 +2,23 @@
 <html>
 <head>
   <title>Lily Bot - Login</title>
-  <style>
-    body {
-      background: #2f3136;
-      color: white;
-      font-family: Arial;
-      text-align: center;
-      padding-top: 100px;
-    }
-    .login-btn {
-      background: #7289da;
-      color: white;
-      padding: 15px 30px;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>🎛️ Painel Lily Bot</h1>
-    <button class="login-btn" onclick="login()">Login com Discord</button>
+  <div class="login-container">
+    <div class="login-box">
+      <img src="https://i.imgur.com/SEU_LOGO.png" alt="Lily Bot" class="bot-logo">
+      <h1>Painel de Controle</h1>
+      <button class="discord-btn" onclick="login()">
+        <img src="https://i.imgur.com/SEU_ICONE_DISCORD.png" alt="Discord"> 
+        Login com Discord
+      </button>
+    </div>
   </div>
 
   <script>
     function login() {
       window.location.href = `https://discord.com/oauth2/authorize?client_id=1388158298305597483&response_type=code&redirect_uri=https%3A%2F%2Flily-dashboard2.vercel.app%2F&scope=identify+email+guilds`;
-    }
-
-    // Redireciona se já tiver código
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('code')) {
-      window.location.href = `/dashboard.html${window.location.search}`;
     }
   </script>
 </body>
