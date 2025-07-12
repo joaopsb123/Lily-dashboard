@@ -3,12 +3,12 @@
 <head>
   <title>Lily Bot - Login</title>
   <style>
-    body { 
-      background: #2f3136; 
-      color: white; 
-      text-align: center; 
-      padding-top: 100px; 
+    body {
+      background: #2f3136;
+      color: white;
       font-family: Arial;
+      text-align: center;
+      padding-top: 100px;
     }
     .login-btn {
       background: #7289da;
@@ -18,16 +18,69 @@
       border-radius: 5px;
       font-size: 16px;
       cursor: pointer;
+      margin-top: 20px;
+    }
+    .user-card {
+      background: #36393f;
+      max-width: 300px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .user-avatar {
+      width: 100px;
+      border-radius: 50%;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🎛️ Painel Lily Bot</h1>
-    <!-- BOTÃO COM SEU LINK DIRETO -->
-    <button class="login-btn" onclick="window.location.href='https://discord.com/oauth2/authorize?client_id=1388158298305597483&response_type=code&redirect_uri=https%3A%2F%2Flily-dashboard2.vercel.app%2F&scope=identify+email+guilds'">
-      Login com Discord
-    </button>
+    
+    <!-- Botão de Login -->
+    <button id="loginBtn" class="login-btn">Login com Discord</button>
+    
+    <!-- Área para mostrar dados do usuário -->
+    <div id="userInfo"></div>
   </div>
+
+  <script>
+    // 1. Redireciona para o Discord OAuth
+    document.getElementById("loginBtn").onclick = () => {
+      window.location.href = "https://discord.com/oauth2/authorize?client_id=1388158298305597483&response_type=code&redirect_uri=https%3A%2F%2Flily-dashboard2.vercel.app%2F&scope=identify+email+guilds";
+    };
+
+    // 2. Processa o retorno após login
+    const urlParams = new URLSearchParams(window.location.search);
+    const discordCode = urlParams.get('code');
+
+    if (discordCode) {
+      // Esconde o botão de login
+      document.getElementById("loginBtn").style.display = "none";
+      
+      // Mostra mensagem de carregamento
+      document.getElementById("userInfo").innerHTML = "<p>Carregando dados...</p>";
+      
+      // Chama a API para obter dados do usuário
+      fetch(`/api/auth?code=${discordCode}`)
+        .then(response => response.json())
+        .then(user => {
+          document.getElementById("userInfo").innerHTML = `
+            <div class="user-card">
+              <img src="${user.avatar}" class="user-avatar">
+              <h2>${user.username}</h2>
+              <p>${user.email || 'Email não disponível'}</p>
+              <button onclick="location.reload()">Sair</button>
+            </div>
+          `;
+        })
+        .catch(error => {
+          document.getElementById("userInfo").innerHTML = `
+            <p style="color: #ff6b6b;">Erro ao carregar dados: ${error.message}</p>
+            <button onclick="location.reload()">Tentar novamente</button>
+          `;
+        });
+    }
+  </script>
 </body>
 </html>
