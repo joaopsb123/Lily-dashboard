@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lily Bot - Dashboard</title>
+  <style>
+    body { background: #1e1f22; color: white; font-family: Arial; }
+    .user-card {
+      background: #2b2d31;
+      width: 300px;
+      margin: 50px auto;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .user-avatar { width: 80px; border-radius: 50%; }
+  </style>
+</head>
+<body>
+  <div class="user-card">
+    <img id="user-avatar" class="user-avatar" src="">
+    <h2 id="username">Carregando...</h2>
+    <button onclick="logout()">Sair</button>
+  </div>
+
+  <script>
+    // Pegar dados do usuário (simplificado)
+    if (window.location.hash) {
+      const params = new URLSearchParams(window.location.hash.substring(1));
+      document.getElementById('username').textContent = params.get('username');
+      document.getElementById('user-avatar').src = params.get('avatar_url');
+    }
+
+    function logout() {
+      window.location.href = '/';
+    }
+  </script>
+</body>
+</html>
