@@ -13,7 +13,7 @@
     .user-card {
       background: #36393f;
       max-width: 400px;
-      margin: 20px auto;
+      margin: 0 auto;
       padding: 20px;
       border-radius: 8px;
     }
@@ -24,29 +24,34 @@
   </style>
 </head>
 <body>
-  <div class="user-card">
-    <h1>Dashboard Lily Bot</h1>
-    <img id="avatar" class="user-avatar" src="">
-    <h2 id="username"></h2>
-    <p id="email"></p>
+  <div class="user-card" id="dashboard">
+    <h1>Carregando...</h1>
   </div>
 
   <script>
-    // Processa o código retornado pelo Discord
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
 
-    if (code) {
+    if (!code) {
+      window.location.href = '/';
+    } else {
       fetch(`/api/auth?code=${code}`)
-        .then(response => response.json())
+        .then(res => res.json())
         .then(user => {
-          document.getElementById('username').textContent = user.username;
-          document.getElementById('email').textContent = user.email;
-          document.getElementById('avatar').src = user.avatar;
+          document.getElementById('dashboard').innerHTML = `
+            <h1>🛠️ Dashboard Lily</h1>
+            <img src="${user.avatar}" class="user-avatar">
+            <h2>${user.username}</h2>
+            <p>${user.email || 'Email privado'}</p>
+            <button onclick="window.location.href='/'">Sair</button>
+          `;
         })
-        .catch(error => {
-          console.error('Erro:', error);
-          document.getElementById('username').textContent = 'Erro ao carregar dados';
+        .catch(err => {
+          document.getElementById('dashboard').innerHTML = `
+            <h1 style="color: #ff6b6b;">Erro!</h1>
+            <p>${err.message}</p>
+            <button onclick="window.location.href='/'">Voltar</button>
+          `;
         });
     }
   </script>
