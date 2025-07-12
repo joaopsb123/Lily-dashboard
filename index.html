@@ -1,86 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Lily Bot - Login</title>
+  <title>Lily Bot Dashboard</title>
   <style>
     body {
       background: #2f3136;
       color: white;
       font-family: Arial;
       text-align: center;
-      padding-top: 100px;
+      padding-top: 50px;
     }
-    .login-btn {
+    #loginBtn, #logoutBtn {
       background: #7289da;
       color: white;
-      padding: 15px 30px;
+      padding: 12px 25px;
       border: none;
       border-radius: 5px;
       font-size: 16px;
       cursor: pointer;
-      margin-top: 20px;
+      margin: 10px;
     }
-    .user-card {
-      background: #36393f;
-      max-width: 300px;
+    #dashboard {
+      display: none;
+      max-width: 400px;
       margin: 20px auto;
-      padding: 20px;
-      border-radius: 8px;
     }
-    .user-avatar {
+    #userAvatar {
       width: 100px;
       border-radius: 50%;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎛️ Painel Lily Bot</h1>
-    
-    <!-- Botão de Login -->
-    <button id="loginBtn" class="login-btn">Login com Discord</button>
-    
-    <!-- Área para mostrar dados do usuário -->
-    <div id="userInfo"></div>
+
+  <!-- Tela de Login -->
+  <div id="loginScreen">
+    <h1>Lily Bot Dashboard</h1>
+    <button id="loginBtn">Login com Discord</button>
+  </div>
+
+  <!-- Tela do Dashboard -->
+  <div id="dashboard">
+    <h1>Bem-vindo!</h1>
+    <img id="userAvatar" src="">
+    <h2 id="username"></h2>
+    <p id="userEmail"></p>
+    <button id="logoutBtn">Sair</button>
   </div>
 
   <script>
-    // 1. Redireciona para o Discord OAuth
+    // 1. Configura Login
     document.getElementById("loginBtn").onclick = () => {
-      window.location.href = "https://discord.com/oauth2/authorize?client_id=1388158298305597483&response_type=code&redirect_uri=https%3A%2F%2Flily-dashboard2.vercel.app%2F&scope=identify+email+guilds";
+      window.location.href = "https://discord.com/oauth2/authorize?client_id=1388158298305597483&response_type=code&redirect_uri=" + 
+        encodeURIComponent(window.location.origin) + 
+        "&scope=identify+email+guilds";
     };
 
-    // 2. Processa o retorno após login
+    // 2. Processa Retorno após Login
     const urlParams = new URLSearchParams(window.location.search);
-    const discordCode = urlParams.get('code');
+    const code = urlParams.get('code');
 
-    if (discordCode) {
-      // Esconde o botão de login
-      document.getElementById("loginBtn").style.display = "none";
+    if (code) {
+      // Remove código da URL
+      history.replaceState({}, "", window.location.pathname);
       
-      // Mostra mensagem de carregamento
-      document.getElementById("userInfo").innerHTML = "<p>Carregando dados...</p>";
-      
-      // Chama a API para obter dados do usuário
-      fetch(`/api/auth?code=${discordCode}`)
-        .then(response => response.json())
+      // Mostra loading
+      document.getElementById("loginScreen").innerHTML = "<p>Carregando...</p>";
+
+      // Chama API
+      fetch(`/api/auth?code=${code}`)
+        .then(res => res.json())
         .then(user => {
-          document.getElementById("userInfo").innerHTML = `
-            <div class="user-card">
-              <img src="${user.avatar}" class="user-avatar">
-              <h2>${user.username}</h2>
-              <p>${user.email || 'Email não disponível'}</p>
-              <button onclick="location.reload()">Sair</button>
-            </div>
-          `;
+          showDashboard(user);
         })
-        .catch(error => {
-          document.getElementById("userInfo").innerHTML = `
-            <p style="color: #ff6b6b;">Erro ao carregar dados: ${error.message}</p>
-            <button onclick="location.reload()">Tentar novamente</button>
-          `;
+        .catch(err => {
+          alert("Erro: " + err.message);
+          location.reload();
         });
     }
+
+    // 3. Mostra Dashboard
+    function showDashboard(user) {
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("dashboard").style.display = "block";
+      
+      document.getElementById("username").textContent = user.username;
+      document.getElementById("userEmail").textContent = user.email;
+      document.getElementById("userAvatar").src = user.avatar;
+    }
+
+    // 4. Logout
+    document.getElementById("logoutBtn").onclick = () => {
+      window.location.href = "/";
+    };
   </script>
 </body>
 </html>
