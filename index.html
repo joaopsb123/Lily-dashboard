@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bot Dashboard</title>
+  <style>
+    body { 
+      font-family: Arial; 
+      background: #2f3136; 
+      color: white;
+      text-align: center;
+      padding-top: 100px;
+    }
+    button {
+      background: #7289da;
+      color: white;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎛️ Painel do Bot</h1>
+    <button onclick="login()">Login com Discord</button>
+    <div id="userInfo"></div>
+  </div>
+
+  <script>
+    async function login() {
+      window.location.href = '/api/auth';
+    }
+
+    // Mostra dados do usuário se já estiver logado
+    fetch('/api/user')
+      .then(res => res.json())
+      .then(data => {
+        if (data.name) {
+          document.getElementById('userInfo').innerHTML = `
+            <h2>Olá, ${data.name}!</h2>
+            <img src="${data.avatar}" width="80">
+          `;
+        }
+      });
+  </script>
+</body>
+</html>
