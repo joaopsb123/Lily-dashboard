@@ -17,20 +17,33 @@ export default async (req, res) => {
 
     const tokens = await tokenRes.json();
 
-    // 2. Pega dados do usuário
-    const userRes = await fetch("https://discord.com/api/users/@me", {
-      headers: { Authorization: `Bearer ${tokens.access_token}` }
-    });
+    // 2. Pega dados do usuário E servidores
+    const [userRes, guildsRes] = await Promise.all([
+      fetch("https://discord.com/api/users/@me", {
+        headers: { Authorization: `Bearer ${tokens.access_token}` }
+      }),
+      fetch("https://discord.com/api/users/@me/guilds", {
+        headers: { Authorization: `Bearer ${tokens.access_token}` }
+      })
+    ]);
 
-    const user = await userRes.json();
+    const [user, guilds] = await Promise.all([
+      userRes.json(),
+      guildsRes.json()
+    ]);
 
-    // 3. Retorna dados formatados
+    // 3. Filtra apenas servidores com permissão de administrador
+    const managedGuilds = guilds.filter(g => (g.permissions & 0x8) === 0x8);
+
     res.json({
-      username: `${user.username}#${user.discriminator}`,
-      email: user.email || null,
-      avatar: user.avatar 
-        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-        : 'https://cdn.discordapp.com/embed/avatars/0.png'
+      user: {
+        username: `${user.username}#${user.discriminator}`,
+        email: user.email || "Privado",
+        avatar: user.avatar 
+          ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+          : 'https://cdn.discordapp.com/embed/avatars/0.png'
+      },
+      guilds: managedGuilds
     });
 
   } catch (err) {
