@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bot Dashboard</title>
+  <title>Lily Bot - Login</title>
   <style>
-    body { 
-      font-family: Arial; 
-      background: #2f3136; 
-      color: white;
-      text-align: center;
-      padding-top: 100px;
-    }
-    button {
-      background: #7289da;
-      color: white;
-      padding: 15px 25px;
+    body { background: #2f3136; color: white; text-align: center; padding-top: 100px; }
+    .lily-logo { width: 150px; border-radius: 50%; }
+    .login-btn { 
+      background: #7289da; 
+      color: white; 
+      padding: 15px 30px;
+      font-size: 18px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
@@ -21,28 +17,10 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎛️ Painel do Bot</h1>
-    <button onclick="login()">Login com Discord</button>
-    <div id="userInfo"></div>
-  </div>
-
-  <script>
-    async function login() {
-      window.location.href = '/api/auth';
-    }
-
-    // Mostra dados do usuário se já estiver logado
-    fetch('/api/user')
-      .then(res => res.json())
-      .then(data => {
-        if (data.name) {
-          document.getElementById('userInfo').innerHTML = `
-            <h2>Olá, ${data.name}!</h2>
-            <img src="${data.avatar}" width="80">
-          `;
-        }
-      });
-  </script>
+  <img src="https://i.imgur.com/SEU_LOGO.png" class="lily-logo" alt="Lily Bot">
+  <h1>Painel de Controle Lily</h1>
+  <button class="login-btn" onclick="window.location.href='/api/auth'">
+    Login com Discord
+  </button>
 </body>
 </html>
