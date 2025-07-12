@@ -1,84 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Lily Bot - Dashboard</title>
+  <title>Dashboard Lily Bot</title>
   <link rel="stylesheet" href="style.css">
+  <script type="module" src="supabase.js"></script>
 </head>
 <body>
   <div class="dashboard">
-    <!-- Sidebar -->
     <div class="sidebar">
-      <div class="user-profile">
-        <img id="user-avatar" src="" alt="Avatar">
-        <h2 id="username"></h2>
-        <p id="user-email"></p>
-      </div>
-      
+      <div id="userProfile"></div>
       <nav>
-        <a href="#" class="active"><i class="icon">⚙️</i> Configurações</a>
-        <a href="#"><i class="icon">🤖</i> Comandos</a>
-        <a href="#"><i class="icon">🔔</i> Notificações</a>
-        <button class="logout-btn" onclick="logout()">Sair</button>
+        <a href="#" class="active">🏠 Início</a>
+        <a href="#">⚙️ Configurações</a>
+        <button id="logoutBtn">🚪 Sair</button>
       </nav>
     </div>
-
-    <!-- Main Content -->
+    
     <div class="main-content">
-      <h1><i class="icon">🎛️</i> Dashboard Lily Bot</h1>
-      
-      <!-- Seção Servidores -->
-      <div class="card">
-        <h2><i class="icon">🏰</i> Seus Servidores</h2>
-        <div class="servers-grid" id="servers-list">
-          <!-- Servidores aparecerão aqui via JS -->
-        </div>
-      </div>
-
-      <!-- Controles do Bot -->
-      <div class="card">
-        <h2><i class="icon">🛠️</i> Controles Rápidos</h2>
-        <div class="controls">
-          <button class="control-btn"><i class="icon">▶️</i> Iniciar Bot</button>
-          <button class="control-btn"><i class="icon">⏸️</i> Pausar</button>
-          <button class="control-btn"><i class="icon">🔄</i> Atualizar</button>
-        </div>
+      <h1>🛠️ Controles do Bot</h1>
+      <div class="controls">
+        <button class="control-btn">▶️ Iniciar</button>
+        <button class="control-btn">⏸ Pausar</button>
       </div>
     </div>
   </div>
 
-  <script>
-    // Processa autenticação
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
+  <script type="module">
+    import { supabase } from './supabase.js'
 
-    if (!code) {
-      window.location.href = '/';
-    } else {
-      fetch(`/api/auth?code=${code}`)
-        .then(res => res.json())
-        .then(data => {
-          // Preenche dados do usuário
-          document.getElementById('user-avatar').src = data.user.avatar;
-          document.getElementById('username').textContent = data.user.username;
-          document.getElementById('user-email').textContent = data.user.email;
-          
-          // Preenche servidores
-          const serversList = document.getElementById('servers-list');
-          data.guilds.forEach(guild => {
-            serversList.innerHTML += `
-              <div class="server-card">
-                <img src="${guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png` : 'https://i.imgur.com/SEU_ICONE_PADRAO.png'}" alt="${guild.name}">
-                <h3>${guild.name}</h3>
-                <button class="manage-btn">Gerenciar</button>
-              </div>
-            `;
-          });
-        });
+    // 1. Verifica sessão
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      window.location.href = '/'
+      return
     }
 
-    function logout() {
-      window.location.href = '/';
-    }
+    // 2. Exibe perfil
+    document.getElementById('userProfile').innerHTML = `
+      <img src="${user.user_metadata.avatar_url}" class="user-avatar">
+      <h2>${user.user_metadata.full_name}</h2>
+      <p>${user.email}</p>
+    `
+
+    // 3. Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await supabase.auth.signOut()
+      window.location.href = '/'
+    })
   </script>
 </body>
 </html>
