@@ -2,43 +2,38 @@ export default async (req, res) => {
   const { code } = req.query;
 
   try {
-    // 1. Troca o código por um token de acesso
-    const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
+    // 1. Troca código por token
+    const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         client_id: process.env.DISCORD_CLIENT_ID,
         client_secret: process.env.DISCORD_CLIENT_SECRET,
         grant_type: "authorization_code",
-        code: code,
-        redirect_uri: "https://lily-dashboard2.vercel.app/dashboard.html",
-      }),
+        code,
+        redirect_uri: process.env.VERCEL_URL + "/dashboard.html"
+      })
     });
 
-    const tokenData = await tokenResponse.json();
+    const tokens = await tokenRes.json();
 
-    // 2. Obtém dados do usuário
-    const userResponse = await fetch("https://discord.com/api/users/@me", {
-      headers: {
-        Authorization: `Bearer ${tokenData.access_token}`,
-      },
+    // 2. Pega dados do usuário
+    const userRes = await fetch("https://discord.com/api/users/@me", {
+      headers: { Authorization: `Bearer ${tokens.access_token}` }
     });
 
-    const userData = await userResponse.json();
+    const user = await userRes.json();
 
-    // 3. Retorna os dados do usuário
+    // 3. Retorna dados formatados
     res.json({
-      username: `${userData.username}#${userData.discriminator}`,
-      email: userData.email || "Não disponível",
-      avatar: userData.avatar 
-        ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`
+      username: `${user.username}#${user.discriminator}`,
+      email: user.email || null,
+      avatar: user.avatar 
+        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
         : 'https://cdn.discordapp.com/embed/avatars/0.png'
     });
 
-  } catch (error) {
-    console.error("Erro na autenticação:", error);
-    res.status(500).json({ error: "Falha na autenticação" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
