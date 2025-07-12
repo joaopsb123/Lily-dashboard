@@ -2,11 +2,13 @@
   "version": 2,
   "builds": [
     { "src": "*.html", "use": "@vercel/static" },
-    { "src": "auth.js", "use": "@vercel/node" }
+    { "src": "auth.js", "use": "@vercel/node" },
+    { "src": "style.css", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/auth", "dest": "/auth.js" },
     { "src": "/dashboard.html", "dest": "/dashboard.html" },
-    { "src": "/", "dest": "/index.html" }
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/style.css", "dest": "/style.css" }
   ]
 }
