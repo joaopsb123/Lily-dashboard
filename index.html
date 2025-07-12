@@ -3,24 +3,31 @@
 <head>
   <title>Lily Bot - Login</title>
   <style>
-    body { background: #2f3136; color: white; text-align: center; padding-top: 100px; }
-    .lily-logo { width: 150px; border-radius: 50%; }
-    .login-btn { 
-      background: #7289da; 
+    body { 
+      background: #2f3136; 
       color: white; 
+      text-align: center; 
+      padding-top: 100px; 
+      font-family: Arial;
+    }
+    .login-btn {
+      background: #7289da;
+      color: white;
       padding: 15px 30px;
-      font-size: 18px;
       border: none;
       border-radius: 5px;
+      font-size: 16px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <img src="https://i.imgur.com/SEU_LOGO.png" class="lily-logo" alt="Lily Bot">
-  <h1>Painel de Controle Lily</h1>
-  <button class="login-btn" onclick="window.location.href='/api/auth'">
-    Login com Discord
-  </button>
+  <div class="container">
+    <h1>🎛️ Painel Lily Bot</h1>
+    <!-- BOTÃO COM SEU LINK DIRETO -->
+    <button class="login-btn" onclick="window.location.href='https://discord.com/oauth2/authorize?client_id=1388158298305597483&response_type=code&redirect_uri=https%3A%2F%2Flily-dashboard2.vercel.app%2F&scope=identify+email+guilds'">
+      Login com Discord
+    </button>
+  </div>
 </body>
 </html>
