@@ -3,23 +3,30 @@
 <head>
   <title>Lily Bot - Login</title>
   <link rel="stylesheet" href="style.css">
+  <script type="module" src="supabase.js"></script>
 </head>
 <body>
   <div class="login-container">
-    <div class="login-box">
-      <img src="https://i.imgur.com/SEU_LOGO.png" alt="Lily Bot" class="bot-logo">
-      <h1>Painel de Controle</h1>
-      <button class="discord-btn" onclick="login()">
-        <img src="https://i.imgur.com/SEU_ICONE_DISCORD.png" alt="Discord"> 
-        Login com Discord
-      </button>
-    </div>
+    <h1>🎛️ Painel Lily Bot</h1>
+    <button id="loginBtn" class="discord-btn">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" width="20"> 
+      Login com Discord
+    </button>
   </div>
 
-  <script>
-    function login() {
-      window.location.href = `https://discord.com/oauth2/authorize?client_id=1388158298305597483&response_type=code&redirect_uri=https%3A%2F%2Flily-dashboard2.vercel.app%2F&scope=identify+email+guilds`;
-    }
+  <script type="module">
+    import { supabase } from './supabase.js'
+
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'discord',
+        options: {
+          redirectTo: window.location.origin + '/dashboard.html'
+        }
+      })
+      
+      if (error) console.error('Erro:', error)
+    })
   </script>
 </body>
 </html>
