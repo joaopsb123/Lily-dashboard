@@ -2,7 +2,19 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Carregando...</title>
+  <title>Redirecionando...</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      text-align: center;
+      margin-top: 60px;
+    }
+    img {
+      border-radius: 50%;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
   <h2>Carregando dados do Discord...</h2>
@@ -17,11 +29,15 @@
       fetch(`/api/callback?code=${code}`)
         .then(res => res.json())
         .then(data => {
-          document.body.innerHTML = `
-            <h1>Olá, ${data.username}#${data.discriminator}</h1>
-            <img src="https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png" width="128">
-            <p>ID: ${data.id}</p>
-          `;
+          if (data.username) {
+            document.body.innerHTML = `
+              <h1>Olá, ${data.username}#${data.discriminator}</h1>
+              <img src="https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png" width="128">
+              <p>ID: ${data.id}</p>
+            `;
+          } else {
+            document.body.innerHTML = `<p>Erro ao buscar dados do Discord.</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+          }
         })
         .catch(err => {
           document.body.innerHTML = "<p>Erro ao buscar dados do Discord.</p>";
