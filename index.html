@@ -1,32 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <title>Lily Bot - Login</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="module" src="supabase.js"></script>
+  <meta charset="UTF-8" />
+  <title>Lily Dashboard</title>
 </head>
 <body>
-  <div class="login-container">
-    <h1>🎛️ Painel Lily Bot</h1>
-    <button id="loginBtn" class="discord-btn">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" width="20"> 
-      Login com Discord
-    </button>
-  </div>
-
-  <script type="module">
-    import { supabase } from './supabase.js'
-
-    document.getElementById('loginBtn').addEventListener('click', async () => {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'discord',
-        options: {
-          redirectTo: window.location.origin + '/dashboard.html'
-        }
-      })
-      
-      if (error) console.error('Erro:', error)
-    })
-  </script>
+  <h1>Bem-vindo ao painel da Lily</h1>
+  <a href="https://discord.com/api/oauth2/authorize?client_id=SEU_CLIENT_ID&redirect_uri=https%3A%2F%2FSEUSITE.vercel.app%2Fcallback&response_type=code&scope=identify%20guilds">
+    <button>Entrar com o Discord</button>
+  </a>
 </body>
 </html>
