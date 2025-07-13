@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Redirecionando...</title>
+  <meta charset="UTF-8" />
+  <title>Dashboard Lily</title>
   <style>
-    body {
-      font-family: sans-serif;
-      background: #f9f9f9;
-      text-align: center;
-      margin-top: 60px;
-    }
-    img {
-      border-radius: 50%;
-      margin-top: 20px;
-    }
+    body { font-family: sans-serif; background: #f9f9f9; text-align: center; margin: 60px auto; max-width: 600px; }
+    img { border-radius: 50%; margin-top: 20px; }
+    ul { list-style: none; padding: 0; }
+    li { background: #fff; margin: 8px 0; padding: 10px; border-radius: 8px; box-shadow: 0 0 6px rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
@@ -29,17 +23,20 @@
       fetch(`/api/callback?code=${code}`)
         .then(res => res.json())
         .then(data => {
-          if (data.username) {
+          if (data.user && data.guilds) {
+            const guildsList = data.guilds.map(g => `<li>${g.name}</li>`).join('');
             document.body.innerHTML = `
-              <h1>Olá, ${data.username}#${data.discriminator}</h1>
-              <img src="https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png" width="128">
-              <p>ID: ${data.id}</p>
+              <h1>Olá, ${data.user.username}#${data.user.discriminator}</h1>
+              <img src="https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png" width="128" alt="Avatar"/>
+              <p>ID: ${data.user.id}</p>
+              <h2>Seus Servidores:</h2>
+              <ul>${guildsList}</ul>
             `;
           } else {
             document.body.innerHTML = `<p>Erro ao buscar dados do Discord.</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
           }
         })
-        .catch(err => {
+        .catch(() => {
           document.body.innerHTML = "<p>Erro ao buscar dados do Discord.</p>";
         });
     }
