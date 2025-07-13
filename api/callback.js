@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   params.append('client_secret', '0DNQT5RRwFYPtJ2rk1bQqqElmsIoHdM6');
   params.append('grant_type', 'authorization_code');
   params.append('code', code);
-  params.append('redirect_uri', 'https://SEUSITE.vercel.app/callback');
+  params.append('redirect_uri', 'https://lily-dashboard-bdgy.vercel.app/');
   params.append('scope', 'identify guilds');
 
   const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
