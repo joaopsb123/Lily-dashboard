@@ -2,209 +2,186 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Configuração do Servidor | Lily Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard do Servidor - Lily</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #36393f;
       color: #fff;
-      margin: 0;
-      padding: 20px;
+      margin: 0; padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
     .container {
-      max-width: 800px;
-      margin: 0 auto;
       background: #2f3136;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      box-sizing: border-box;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
     h1 {
-      color: #fff;
-      margin-bottom: 5px;
+      margin-top: 0;
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 25px;
     }
-    .guild-id {
-      color: #b9bbbe;
-      font-size: 14px;
-      margin-bottom: 20px;
+    label {
+      display: block;
+      margin-bottom: 12px;
+      font-weight: 600;
+      cursor: pointer;
     }
-    .feature-card {
-      background: #40444b;
+    input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.3);
+      vertical-align: middle;
+      cursor: pointer;
+    }
+    textarea {
+      width: 100%;
       border-radius: 8px;
-      padding: 20px;
+      border: none;
+      padding: 10px;
+      resize: vertical;
+      font-size: 1rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin-bottom: 20px;
-    }
-    .feature-title {
-      font-weight: bold;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .feature-controls {
-      margin-top: 15px;
+      box-sizing: border-box;
     }
     button {
       background: #5865F2;
-      color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 4px;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
       cursor: pointer;
-      margin-right: 10px;
-      transition: background 0.2s;
+      font-weight: 600;
+      width: 100%;
+      font-size: 1.1rem;
+      transition: background 0.3s ease;
     }
     button:hover {
-      background: #4752C4;
+      background: #4752c4;
     }
-    .toggle-switch {
-      position: relative;
-      display: inline-block;
-      width: 60px;
-      height: 34px;
+    .status-msg {
+      margin-top: 15px;
+      font-weight: 600;
+      text-align: center;
     }
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #72767d;
-      transition: .4s;
-      border-radius: 34px;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
-    }
-    input:checked + .slider {
-      background-color: #3ba55c;
-    }
-    input:checked + .slider:before {
-      transform: translateX(26px);
-    }
-    .back-link {
-      display: inline-block;
-      margin-top: 20px;
-      color: #5865F2;
-      text-decoration: none;
-    }
-    .back-link:hover {
-      text-decoration: underline;
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      .container {
+        padding: 20px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1 id="guild-name">Configuração do Servidor</h1>
-    <div class="guild-id" id="guild-id">Carregando...</div>
+    <h1>Configurações do Servidor</h1>
+    <form id="configForm">
+      <label>
+        <input type="checkbox" id="welcome_enabled" />
+        Ativar mensagem de boas-vindas
+      </label>
 
-    <div class="feature-card">
-      <div class="feature-title">👋 Mensagens de Boas-Vindas</div>
-      <div class="feature-controls">
-        <label class="toggle-switch">
-          <input type="checkbox" id="welcome-enabled" />
-          <span class="slider"></span>
-        </label>
-        <label for="welcome-enabled">Ativar Mensagens</label>
-      </div>
-      <div id="welcome-settings" style="margin-top: 15px; display: none;">
-        <div>
-          <label for="welcome-channel">Canal de Boas-Vindas (ID):</label>
-          <input type="text" id="welcome-channel" style="margin-left: 10px; padding: 5px; background: #36393f; color: #fff; border: 1px solid #202225;" />
-        </div>
-        <div style="margin-top: 10px;">
-          <label for="welcome-message">Mensagem:</label><br />
-          <textarea id="welcome-message" rows="2" style="width: 100%; margin-top: 5px; padding: 8px; background: #36393f; color: #fff; border: 1px solid #202225;"></textarea>
-        </div>
-        <button id="save-welcome">Salvar Configurações</button>
-      </div>
-    </div>
+      <label for="welcome_channel">ID do canal de boas-vindas:</label>
+      <input type="text" id="welcome_channel" placeholder="Ex: 123456789012345678" />
 
-    <div class="feature-card">
-      <div class="feature-title">🌸 Sistema de Tickets</div>
-      <div class="feature-controls">
-        <label class="toggle-switch">
-          <input type="checkbox" id="tickets-enabled" />
-          <span class="slider"></span>
-        </label>
-        <label for="tickets-enabled">Ativar Tickets</label>
-      </div>
-      <div id="tickets-settings" style="margin-top: 15px; display: none;">
-        <div>
-          <label for="tickets-category">Categoria de Tickets (ID):</label>
-          <input type="text" id="tickets-category" style="margin-left: 10px; padding: 5px; background: #36393f; color: #fff; border: 1px solid #202225;" />
-        </div>
-        <button id="save-tickets" style="margin-top: 10px;">Salvar Configurações</button>
-      </div>
-    </div>
+      <label for="welcome_message">Mensagem de boas-vindas:</label>
+      <textarea id="welcome_message" rows="3" placeholder="Ex: Bem-vindo(a) {user} ao {server}!"></textarea>
 
-    <a href="callback.html" class="back-link">← Voltar para seus servidores</a>
+      <label>
+        <input type="checkbox" id="tickets_enabled" />
+        Ativar sistema de tickets
+      </label>
+
+      <button type="submit">Salvar Configurações</button>
+      <p id="status" class="status-msg"></p>
+    </form>
   </div>
 
   <script>
-    const guildId = new URLSearchParams(window.location.search).get('id');
-    const defaultCfg = {
-      welcome_enabled: false,
-      welcome_channel: '',
-      welcome_message: '',
-      tickets_enabled: false,
-      tickets_category: ''
-    };
-    let cfg = JSON.parse(localStorage.getItem('guild_' + guildId) || JSON.stringify(defaultCfg));
-
-    document.getElementById('guild-id').textContent = guildId ? `ID do Servidor: ${guildId}` : 'Erro: ID ausente';
-    document.getElementById('guild-name').textContent = guildId ? `Configurações do Servidor: ${guildId}` : 'Erro';
-
-    function applyUI() {
-      document.getElementById('welcome-enabled').checked = cfg.welcome_enabled;
-      document.getElementById('tickets-enabled').checked = cfg.tickets_enabled;
-      document.getElementById('welcome-settings').style.display = cfg.welcome_enabled ? 'block' : 'none';
-      document.getElementById('tickets-settings').style.display = cfg.tickets_enabled ? 'block' : 'none';
-      document.getElementById('welcome-channel').value = cfg.welcome_channel;
-      document.getElementById('welcome-message').value = cfg.welcome_message;
-      document.getElementById('tickets-category').value = cfg.tickets_category;
+    // Pega o ID do servidor da query string
+    function getQueryParam(param) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(param);
     }
 
-    document.getElementById('welcome-enabled').addEventListener('change', e => {
-      cfg.welcome_enabled = e.target.checked;
-      applyUI();
-      localStorage.setItem('guild_' + guildId, JSON.stringify(cfg));
+    // Atualiza o formulário com dados do servidor
+    async function loadConfig(guildId) {
+      try {
+        const res = await fetch(`/api/guild?id=${guildId}`);
+        if (!res.ok) throw new Error("Não foi possível carregar as configurações");
+        const data = await res.json();
+
+        // Preenche os campos do formulário
+        document.getElementById('welcome_enabled').checked = data.welcome_enabled ?? false;
+        document.getElementById('welcome_channel').value = data.welcome_channel ?? '';
+        document.getElementById('welcome_message').value = data.welcome_message ?? '';
+        document.getElementById('tickets_enabled').checked = data.tickets_enabled ?? false;
+      } catch (err) {
+        document.getElementById('status').textContent = "Erro ao carregar configurações.";
+        document.getElementById('status').style.color = "#f04747";
+      }
+    }
+
+    // Salva configurações via API
+    async function saveConfig(guildId, config) {
+      try {
+        const res = await fetch(`/api/guild?id=${guildId}`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(config),
+        });
+        if (!res.ok) throw new Error("Falha ao salvar configurações");
+        document.getElementById('status').textContent = "Configurações salvas com sucesso!";
+        document.getElementById('status').style.color = "#43b581";
+      } catch (err) {
+        document.getElementById('status').textContent = "Erro ao salvar configurações.";
+        document.getElementById('status').style.color = "#f04747";
+      }
+    }
+
+    // Evento submit do formulário
+    document.getElementById('configForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const guildId = getQueryParam('id');
+      if (!guildId) {
+        alert("ID do servidor ausente na URL.");
+        return;
+      }
+      const config = {
+        welcome_enabled: document.getElementById('welcome_enabled').checked,
+        welcome_channel: document.getElementById('welcome_channel').value.trim(),
+        welcome_message: document.getElementById('welcome_message').value.trim(),
+        tickets_enabled: document.getElementById('tickets_enabled').checked,
+      };
+      // Valida canal (opcional)
+      if (config.welcome_channel && !/^\d+$/.test(config.welcome_channel)) {
+        alert("ID do canal deve conter apenas números.");
+        return;
+      }
+      await saveConfig(guildId, config);
     });
 
-    document.getElementById('save-welcome').addEventListener('click', () => {
-      cfg.welcome_channel = document.getElementById('welcome-channel').value;
-      cfg.welcome_message = document.getElementById('welcome-message').value;
-      localStorage.setItem('guild_' + guildId, JSON.stringify(cfg));
-      alert('Configurações de boas-vindas salvas!');
+    // Ao carregar página
+    window.addEventListener('load', () => {
+      const guildId = getQueryParam('id');
+      if (!guildId) {
+        document.getElementById('status').textContent = "ID do servidor ausente na URL.";
+        document.getElementById('status').style.color = "#f04747";
+        return;
+      }
+      loadConfig(guildId);
     });
-
-    document.getElementById('tickets-enabled').addEventListener('change', e => {
-      cfg.tickets_enabled = e.target.checked;
-      applyUI();
-      localStorage.setItem('guild_' + guildId, JSON.stringify(cfg));
-    });
-
-    document.getElementById('save-tickets').addEventListener('click', () => {
-      cfg.tickets_category = document.getElementById('tickets-category').value;
-      localStorage.setItem('guild_' + guildId, JSON.stringify(cfg));
-      alert('Configurações de tickets salvas!');
-    });
-
-    applyUI();
   </script>
 </body>
 </html>
