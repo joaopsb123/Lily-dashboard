@@ -2,225 +2,160 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Configurações do Servidor - Dashboard da Lily</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configurações do Servidor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background: #36393f;
-      color: #fff;
+      color: white;
       margin: 0;
-      padding: 20px 15px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding: 0;
     }
+
     header {
-      text-align: center;
-      margin-bottom: 30px;
-      width: 100%;
-      max-width: 600px;
-    }
-    h1 {
-      margin: 0;
-      font-size: 2rem;
-      color: #fff;
-    }
-    main {
-      max-width: 600px;
-      width: 100%;
       background: #2f3136;
-      padding: 25px 30px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      padding: 20px;
       text-align: center;
+      border-bottom: 2px solid #202225;
     }
-    .server-info {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 30px;
-      justify-content: center;
-    }
-    .server-info img {
-      border-radius: 50%;
-      width: 72px;
-      height: 72px;
-      object-fit: cover;
-      border: 2px solid #5865F2;
-      background: #202225;
-    }
-    .server-name {
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: #fff;
-    }
-    .status-bot {
-      font-size: 0.9rem;
-      font-weight: bold;
-      color: #43b581;
-      background: #23272a;
-      padding: 4px 8px;
+
+    header img {
+      width: 64px;
+      height: 64px;
       border-radius: 8px;
-      display: inline-block;
+    }
+
+    header h1 {
+      margin: 10px 0 5px;
+      font-size: 24px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      background: #2f3136;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+
+    .setting {
+      background: #40444b;
+      padding: 20px;
       margin-bottom: 20px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .status-bot.absent {
-      color: #f04747;
+
+    .setting h3 {
+      margin: 0;
+      font-size: 18px;
     }
-    .btn {
+
+    .setting button {
       background: #5865F2;
       border: none;
-      padding: 12px 18px;
-      color: #fff;
-      font-weight: 600;
-      border-radius: 8px;
+      color: white;
+      padding: 10px 16px;
+      font-size: 14px;
+      border-radius: 6px;
       cursor: pointer;
-      margin: 8px 5px;
-      transition: background 0.2s ease-in-out;
-      min-width: 180px;
+      transition: background 0.2s;
     }
-    .btn:hover {
-      background: #4752C4;
+
+    .setting button:hover {
+      background: #4752c4;
     }
-    .message {
-      margin-top: 20px;
-      font-size: 1rem;
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
       color: #b9bbbe;
     }
-    .toggle-status {
-      margin-top: 15px;
-      font-weight: 600;
-      color: #ccc;
+
+    .logo-preview {
+      margin-top: 20px;
     }
-    .footer {
-      margin-top: 40px;
-      font-size: 0.9rem;
-      color: #999;
+
+    .logo-preview img {
+      width: 100%;
+      border-radius: 8px;
+      max-height: 200px;
+      object-fit: cover;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Configurações do Servidor</h1>
+    <img src="https://cdn.discordapp.com/avatars/1392176069070557365/803187fac36047e7e1f24b5317e96245.png?size=128" alt="Logo do Bot" />
+    <h1>Painel de Configuração</h1>
+    <p>Gerencie as configurações do seu servidor com facilidade</p>
   </header>
 
-  <main id="main-content">
-    <p>Carregando informações do servidor...</p>
-  </main>
+  <div class="container">
+    <div class="setting">
+      <h3><i class="fas fa-door-open"></i> Boas-vindas</h3>
+      <button id="welcomeBtn">Carregando...</button>
+    </div>
 
-  <div class="footer">Dashboard da Lily — Feito com 💜</div>
+    <div class="setting">
+      <h3><i class="fas fa-ticket-alt"></i> Sistema de Tickets</h3>
+      <button id="ticketsBtn">Carregando...</button>
+    </div>
+
+    <div class="logo-preview">
+      <img src="https://cdn.discordapp.com/attachments/1388802898313347155/1393678729095417986/1752349044.png?ex=6874b4b6&is=68736336&hm=1a75e6c03263db5114593c7dcb6e7f921af021aff6b27e596b1d4e687304a6e2&" alt="Banner Lily" />
+    </div>
+  </div>
+
+  <footer>🌸 Lily Dashboard — todos os direitos reservados</footer>
 
   <script>
-    // Função que pega a extensão certa da logo (gif para animados, png para normais)
-    function getIconUrl(id, icon) {
-      if (!icon) return 'https://via.placeholder.com/72?text=?';
-      const isAnimated = icon.startsWith('a_');
-      const ext = isAnimated ? 'gif' : 'png';
-      return `https://cdn.discordapp.com/icons/${id}/${icon}.${ext}`;
+    const welcomeBtn = document.getElementById('welcomeBtn');
+    const ticketsBtn = document.getElementById('ticketsBtn');
+    const guildId = new URLSearchParams(location.search).get("id") || "default";
+
+    function loadConfig() {
+      const data = localStorage.getItem(`guild_${guildId}`);
+      return data ? JSON.parse(data) : {
+        welcome_enabled: false,
+        tickets_enabled: false
+      };
     }
 
-    // Simula pegar dados do backend (substitua por chamada real)
-    async function fetchGuildData(guildId) {
-      // Simulando dados:
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve({
-            id: guildId,
-            name: "Servidor Exemplo",
-            icon: "a_123456789abcdef", // Exemplo animado, troque para teste normal "123456789abcdef"
-            hasBot: true,
-            welcome_enabled: JSON.parse(localStorage.getItem(`guild_${guildId}_welcome`)) ?? true,
-            tickets_enabled: JSON.parse(localStorage.getItem(`guild_${guildId}_tickets`)) ?? true
-          });
-        }, 500);
-      });
+    function saveConfig(config) {
+      localStorage.setItem(`guild_${guildId}`, JSON.stringify(config));
     }
 
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
+    function updateButtons(config) {
+      welcomeBtn.textContent = config.welcome_enabled ? 'Desativar Boas-vindas' : 'Ativar Boas-vindas';
+      ticketsBtn.textContent = config.tickets_enabled ? 'Desativar Tickets' : 'Ativar Tickets';
     }
 
-    // Atualiza o localStorage e texto do botão
-    function toggleSetting(guildId, setting, btn) {
-      const current = JSON.parse(localStorage.getItem(`guild_${guildId}_${setting}`)) ?? true;
-      localStorage.setItem(`guild_${guildId}_${setting}`, !current);
-      btn.textContent = !current ? `Desativar ${setting === 'welcome' ? 'Boas-vindas' : 'Tickets'}` : `Ativar ${setting === 'welcome' ? 'Boas-vindas' : 'Tickets'}`;
-      const statusText = document.getElementById(`status-${setting}`);
-      statusText.textContent = !current ? `${setting === 'welcome' ? 'Boas-vindas' : 'Tickets'} ativados` : `${setting === 'welcome' ? 'Boas-vindas' : 'Tickets'} desativados`;
-      statusText.style.color = !current ? '#43b581' : '#f04747';
+    function setup() {
+      const config = loadConfig();
+
+      welcomeBtn.onclick = () => {
+        config.welcome_enabled = !config.welcome_enabled;
+        saveConfig(config);
+        updateButtons(config);
+      };
+
+      ticketsBtn.onclick = () => {
+        config.tickets_enabled = !config.tickets_enabled;
+        saveConfig(config);
+        updateButtons(config);
+      };
+
+      updateButtons(config);
     }
 
-    function renderGuild(data) {
-      const main = document.getElementById('main-content');
-      main.innerHTML = '';
-
-      // Server info
-      const serverInfo = document.createElement('div');
-      serverInfo.classList.add('server-info');
-      serverInfo.innerHTML = `
-        <img src="${getIconUrl(data.id, data.icon)}" alt="Ícone do servidor" onerror="this.src='https://via.placeholder.com/72?text=?'" />
-        <span class="server-name">${data.name}</span>
-      `;
-      main.appendChild(serverInfo);
-
-      // Bot status
-      const botStatus = document.createElement('div');
-      botStatus.classList.add('status-bot');
-      botStatus.textContent = data.hasBot ? 'Bot presente no servidor' : 'Bot ausente no servidor';
-      if (!data.hasBot) botStatus.classList.add('absent');
-      main.appendChild(botStatus);
-
-      // Boas-vindas toggle
-      const welcomeBtn = document.createElement('button');
-      welcomeBtn.classList.add('btn');
-      welcomeBtn.textContent = data.welcome_enabled ? 'Desativar Boas-vindas' : 'Ativar Boas-vindas';
-      welcomeBtn.onclick = () => toggleSetting(data.id, 'welcome', welcomeBtn);
-
-      const welcomeStatus = document.createElement('div');
-      welcomeStatus.classList.add('toggle-status');
-      welcomeStatus.id = 'status-welcome';
-      welcomeStatus.textContent = data.welcome_enabled ? 'Boas-vindas ativados' : 'Boas-vindas desativados';
-      welcomeStatus.style.color = data.welcome_enabled ? '#43b581' : '#f04747';
-
-      // Tickets toggle
-      const ticketBtn = document.createElement('button');
-      ticketBtn.classList.add('btn');
-      ticketBtn.textContent = data.tickets_enabled ? 'Desativar Tickets' : 'Ativar Tickets';
-      ticketBtn.onclick = () => toggleSetting(data.id, 'tickets', ticketBtn);
-
-      const ticketStatus = document.createElement('div');
-      ticketStatus.classList.add('toggle-status');
-      ticketStatus.id = 'status-tickets';
-      ticketStatus.textContent = data.tickets_enabled ? 'Tickets ativados' : 'Tickets desativados';
-      ticketStatus.style.color = data.tickets_enabled ? '#43b581' : '#f04747';
-
-      // Adiciona tudo ao main
-      main.appendChild(welcomeBtn);
-      main.appendChild(welcomeStatus);
-      main.appendChild(ticketBtn);
-      main.appendChild(ticketStatus);
-
-      // Mensagem extra
-      const msg = document.createElement('p');
-      msg.classList.add('message');
-      msg.textContent = 'Configurações simuladas usando localStorage. Funcionalidades reais requerem backend.';
-      main.appendChild(msg);
-    }
-
-    async function main() {
-      const guildId = getQueryParam('id');
-      if (!guildId) {
-        document.getElementById('main-content').innerHTML = '<p>Erro: ID do servidor ausente na URL.</p>';
-        return;
-      }
-      const data = await fetchGuildData(guildId);
-      renderGuild(data);
-    }
-
-    main();
+    setup();
   </script>
 </body>
 </html>
