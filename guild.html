@@ -4,23 +4,107 @@
   <meta charset="UTF-8" />
   <title>Configuração do Servidor | Lily Dashboard</title>
   <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #36393f; color: #fff; margin: 0; padding: 20px; }
-    .container { max-width: 800px; margin: 0 auto; background: #2f3136; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    h1 { color: #fff; margin-bottom: 5px; }
-    .guild-id { color: #b9bbbe; font-size: 14px; margin-bottom: 20px; }
-    .feature-card { background: #40444b; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-    .feature-title { font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-    .feature-controls { margin-top: 15px; }
-    button { background: #5865F2; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-right: 10px; transition: background 0.2s; }
-    button:hover { background: #4752C4; }
-    .toggle-switch { position: relative; display: inline-block; width: 60px; height: 34px; }
-    .toggle-switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #72767d; transition: .4s; border-radius: 34px; }
-    .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-    input:checked + .slider { background-color: #3ba55c; }
-    input:checked + .slider:before { transform: translateX(26px); }
-    .back-link { display: inline-block; margin-top: 20px; color: #5865F2; text-decoration: none; }
-    .back-link:hover { text-decoration: underline; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #36393f;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #2f3136;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #fff;
+      margin-bottom: 5px;
+    }
+    .guild-id {
+      color: #b9bbbe;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .feature-card {
+      background: #40444b;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .feature-title {
+      font-weight: bold;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .feature-controls {
+      margin-top: 15px;
+    }
+    button {
+      background: #5865F2;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #4752C4;
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #72767d;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #3ba55c;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #5865F2;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -28,12 +112,11 @@
     <h1 id="guild-name">Configuração do Servidor</h1>
     <div class="guild-id" id="guild-id">Carregando...</div>
 
-    <!-- Boas-Vindas -->
     <div class="feature-card">
       <div class="feature-title">👋 Mensagens de Boas-Vindas</div>
       <div class="feature-controls">
         <label class="toggle-switch">
-          <input type="checkbox" id="welcome-enabled">
+          <input type="checkbox" id="welcome-enabled" />
           <span class="slider"></span>
         </label>
         <label for="welcome-enabled">Ativar Mensagens</label>
@@ -41,22 +124,21 @@
       <div id="welcome-settings" style="margin-top: 15px; display: none;">
         <div>
           <label for="welcome-channel">Canal de Boas-Vindas (ID):</label>
-          <input type="text" id="welcome-channel" style="margin-left: 10px; padding: 5px; background: #36393f; color: #fff; border: 1px solid #202225;">
+          <input type="text" id="welcome-channel" style="margin-left: 10px; padding: 5px; background: #36393f; color: #fff; border: 1px solid #202225;" />
         </div>
         <div style="margin-top: 10px;">
-          <label for="welcome-message">Mensagem:</label><br>
+          <label for="welcome-message">Mensagem:</label><br />
           <textarea id="welcome-message" rows="2" style="width: 100%; margin-top: 5px; padding: 8px; background: #36393f; color: #fff; border: 1px solid #202225;"></textarea>
         </div>
         <button id="save-welcome">Salvar Configurações</button>
       </div>
     </div>
 
-    <!-- Tickets -->
     <div class="feature-card">
       <div class="feature-title">🌸 Sistema de Tickets</div>
       <div class="feature-controls">
         <label class="toggle-switch">
-          <input type="checkbox" id="tickets-enabled">
+          <input type="checkbox" id="tickets-enabled" />
           <span class="slider"></span>
         </label>
         <label for="tickets-enabled">Ativar Tickets</label>
@@ -64,78 +146,65 @@
       <div id="tickets-settings" style="margin-top: 15px; display: none;">
         <div>
           <label for="tickets-category">Categoria de Tickets (ID):</label>
-          <input type="text" id="tickets-category" style="margin-left: 10px; padding: 5px; background: #36393f; color: #fff; border: 1px solid #202225;">
+          <input type="text" id="tickets-category" style="margin-left: 10px; padding: 5px; background: #36393f; color: #fff; border: 1px solid #202225;" />
         </div>
         <button id="save-tickets" style="margin-top: 10px;">Salvar Configurações</button>
       </div>
     </div>
 
-    <a href="/callback.html" class="back-link">← Voltar para seus servidores</a>
+    <a href="callback.html" class="back-link">← Voltar para seus servidores</a>
   </div>
 
   <script>
     const guildId = new URLSearchParams(window.location.search).get('id');
+    const defaultCfg = {
+      welcome_enabled: false,
+      welcome_channel: '',
+      welcome_message: '',
+      tickets_enabled: false,
+      tickets_category: ''
+    };
+    let cfg = JSON.parse(localStorage.getItem('guild_' + guildId) || JSON.stringify(defaultCfg));
 
-    function loadConfig() {
-      const data = localStorage.getItem(`guild_${guildId}`);
-      return data ? JSON.parse(data) : {
-        welcome_enabled: false,
-        welcome_channel: '',
-        welcome_message: '',
-        tickets_enabled: false,
-        tickets_category: ''
-      };
-    }
+    document.getElementById('guild-id').textContent = guildId ? `ID do Servidor: ${guildId}` : 'Erro: ID ausente';
+    document.getElementById('guild-name').textContent = guildId ? `Configurações do Servidor: ${guildId}` : 'Erro';
 
-    function saveConfig(cfg) {
-      localStorage.setItem(`guild_${guildId}`, JSON.stringify(cfg));
-    }
-
-    function applyUI(cfg) {
+    function applyUI() {
       document.getElementById('welcome-enabled').checked = cfg.welcome_enabled;
-      document.getElementById('welcome-channel').value = cfg.welcome_channel;
-      document.getElementById('welcome-message').value = cfg.welcome_message;
       document.getElementById('tickets-enabled').checked = cfg.tickets_enabled;
-      document.getElementById('tickets-category').value = cfg.tickets_category;
-
       document.getElementById('welcome-settings').style.display = cfg.welcome_enabled ? 'block' : 'none';
       document.getElementById('tickets-settings').style.display = cfg.tickets_enabled ? 'block' : 'none';
+      document.getElementById('welcome-channel').value = cfg.welcome_channel;
+      document.getElementById('welcome-message').value = cfg.welcome_message;
+      document.getElementById('tickets-category').value = cfg.tickets_category;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      if (!guildId) return document.getElementById('guild-id').textContent = 'Erro: ID ausente';
-
-      document.getElementById('guild-id').textContent = `ID do Servidor: ${guildId}`;
-      document.getElementById('guild-name').textContent = `Configurações do Servidor: ${guildId}`;
-
-      const cfg = loadConfig();
-      applyUI(cfg);
-
-      document.getElementById('welcome-enabled').addEventListener('change', e => {
-        cfg.welcome_enabled = e.target.checked;
-        applyUI(cfg);
-        saveConfig(cfg);
-      });
-
-      document.getElementById('save-welcome').addEventListener('click', () => {
-        cfg.welcome_channel = document.getElementById('welcome-channel').value;
-        cfg.welcome_message = document.getElementById('welcome-message').value;
-        saveConfig(cfg);
-        alert('Configurações de boas-vindas salvas!');
-      });
-
-      document.getElementById('tickets-enabled').addEventListener('change', e => {
-        cfg.tickets_enabled = e.target.checked;
-        applyUI(cfg);
-        saveConfig(cfg);
-      });
-
-      document.getElementById('save-tickets').addEventListener('click', () => {
-        cfg.tickets_category = document.getElementById('tickets-category').value;
-        saveConfig(cfg);
-        alert('Configurações de tickets salvas!');
-      });
+    document.getElementById('welcome-enabled').addEventListener('change', e => {
+      cfg.welcome_enabled = e.target.checked;
+      applyUI();
+      localStorage.setItem('guild_' + guildId, JSON.stringify(cfg));
     });
+
+    document.getElementById('save-welcome').addEventListener('click', () => {
+      cfg.welcome_channel = document.getElementById('welcome-channel').value;
+      cfg.welcome_message = document.getElementById('welcome-message').value;
+      localStorage.setItem('guild_' + guildId, JSON.stringify(cfg));
+      alert('Configurações de boas-vindas salvas!');
+    });
+
+    document.getElementById('tickets-enabled').addEventListener('change', e => {
+      cfg.tickets_enabled = e.target.checked;
+      applyUI();
+      localStorage.setItem('guild_' + guildId, JSON.stringify(cfg));
+    });
+
+    document.getElementById('save-tickets').addEventListener('click', () => {
+      cfg.tickets_category = document.getElementById('tickets-category').value;
+      localStorage.setItem('guild_' + guildId, JSON.stringify(cfg));
+      alert('Configurações de tickets salvas!');
+    });
+
+    applyUI();
   </script>
 </body>
 </html>
