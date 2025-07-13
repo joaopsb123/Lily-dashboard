@@ -1,41 +1,43 @@
 export default async function handler(req, res) {
-  const { code } = req.query;
+  const code = req.query.code;
+  const redirect_uri = 'https://lily-dashboard-five.vercel.app/callback.html';
 
-  if (!code) return res.status(400).json({ error: 'Faltando o code' });
-
-  const params = new URLSearchParams();
-  params.append('client_id', '1392176069070557365');
-  params.append('client_secret', '0DNQT5RRwFYPtJ2rk1bQqqElmsIoHdM6');
-  params.append('grant_type', 'authorization_code');
-  params.append('code', code);
-  params.append('redirect_uri', 'https://lily-dashboard-five.vercel.app/callback.html');
-  params.append('scope', 'identify email guilds');
+  if (!code) return res.status(400).json({ error: 'Código ausente' });
 
   try {
-    const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
+    const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params
+      body: new URLSearchParams({
+        client_id: '1392176069070557365',
+        client_secret: '0DNQT5RRwFYPtJ2rk1bQqqElmsIoHdM6',
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri
+      })
     });
 
-    const tokenData = await tokenRes.json();
+    const tokenData = await tokenResponse.json();
 
-    if (!tokenData.access_token) {
-      return res.status(400).json({ error: 'Token inválido', debug: tokenData });
+    if (tokenData.error) {
+      return res.status(400).json({
+        error: 'Token inválido',
+        debug: tokenData
+      });
     }
 
-    const userRes = await fetch('https://discord.com/api/users/@me', {
+    const userResponse = await fetch('https://discord.com/api/users/@me', {
       headers: { Authorization: `Bearer ${tokenData.access_token}` }
     });
-    const userData = await userRes.json();
-
-    const guildsRes = await fetch('https://discord.com/api/users/@me/guilds', {
+    const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
       headers: { Authorization: `Bearer ${tokenData.access_token}` }
     });
-    const guildsData = await guildsRes.json();
 
-    res.status(200).json({ user: userData, guilds: guildsData });
+    const user = await userResponse.json();
+    const guilds = await guildsResponse.json();
+
+    return res.status(200).json({ user, guilds });
   } catch (err) {
-    res.status(500).json({ error: 'Erro interno', debug: err });
+    return res.status(500).json({ error: 'Erro interno', debug: err.message });
   }
 }
