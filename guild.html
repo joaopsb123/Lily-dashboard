@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Configuração do Servidor</title>
+  <style>
+    body { font-family: sans-serif; background: #fff; max-width: 600px; margin: 60px auto; text-align: center; }
+    button {
+      margin: 12px; padding: 10px 20px; font-size: 16px;
+      background: #5865F2; color: white; border: none; border-radius: 6px;
+    }
+    button:hover { background: #4752C4; }
+  </style>
+</head>
+<body>
+  <h1>⚙️ Configuração do Servidor</h1>
+  <p id="server-name">Carregando ID...</p>
+
+  <button onclick="alert('🔧 Em breve: sistema de tickets')">Tickets</button>
+  <button onclick="alert('👋 Em breve: mensagens de boas-vindas e saídas')">Entradas / Saídas</button>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const guildId = params.get('id');
+
+    document.getElementById("server-name").textContent = `Servidor ID: ${guildId}`;
+
+    // Aqui futuramente você pode buscar configs no backend
+  </script>
+</body>
+</html>
