@@ -12,6 +12,7 @@ export default async function handler(req, res) {
   params.append('scope', 'identify email guilds');
 
   try {
+    // Troca code por token
     const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -24,15 +25,21 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Token inválido', debug: tokenData });
     }
 
+    // Pega dados do usuário
     const userRes = await fetch('https://discord.com/api/users/@me', {
-      headers: {
-        Authorization: `Bearer ${tokenData.access_token}`
-      }
+      headers: { Authorization: `Bearer ${tokenData.access_token}` }
     });
-
     const userData = await userRes.json();
 
-    res.status(200).json(userData);
+    // Pega servidores do usuário
+    const guildsRes = await fetch('https://discord.com/api/users/@me/guilds', {
+      headers: { Authorization: `Bearer ${tokenData.access_token}` }
+    });
+    const guildsData = await guildsRes.json();
+
+    // Retorna tudo
+    res.status(200).json({ user: userData, guilds: guildsData });
+
   } catch (err) {
     res.status(500).json({ error: 'Erro interno', debug: err });
   }
