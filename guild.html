@@ -10,10 +10,14 @@
       color: #fff;
       margin: 0;
       padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: start;
     }
     .container {
       max-width: 800px;
-      margin: 0 auto;
+      width: 100%;
       background: #2f3136;
       border-radius: 8px;
       padding: 20px;
@@ -22,11 +26,13 @@
     h1 {
       color: #fff;
       margin-bottom: 5px;
+      word-break: break-word;
     }
     .guild-id {
       color: #b9bbbe;
       font-size: 14px;
       margin-bottom: 20px;
+      word-break: break-word;
     }
     .feature-card {
       background: #40444b;
@@ -40,9 +46,14 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      font-size: 18px;
     }
     .feature-controls {
       margin-top: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
     button {
       background: #5865F2;
@@ -51,11 +62,16 @@
       padding: 10px 20px;
       border-radius: 4px;
       cursor: pointer;
-      margin-right: 10px;
+      margin-top: 10px;
       transition: background 0.2s;
+      user-select: none;
     }
-    button:hover {
+    button:hover:not(:disabled) {
       background: #4752C4;
+    }
+    button:disabled {
+      background: #72767d;
+      cursor: not-allowed;
     }
     .toggle-switch {
       position: relative;
@@ -71,10 +87,7 @@
     .slider {
       position: absolute;
       cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background-color: #72767d;
       transition: .4s;
       border-radius: 34px;
@@ -82,10 +95,8 @@
     .slider:before {
       position: absolute;
       content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
+      height: 26px; width: 26px;
+      left: 4px; bottom: 4px;
       background-color: white;
       transition: .4s;
       border-radius: 50%;
@@ -101,100 +112,247 @@
       margin-top: 20px;
       color: #5865F2;
       text-decoration: none;
+      user-select: none;
     }
     .back-link:hover {
       text-decoration: underline;
     }
+    label[for] {
+      cursor: pointer;
+      user-select: none;
+    }
+    select, textarea {
+      background: #36393f;
+      color: #fff;
+      border: 1px solid #202225;
+      border-radius: 4px;
+      padding: 6px;
+      font-size: 14px;
+      min-width: 150px;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    textarea {
+      resize: vertical;
+    }
+    small {
+      color: #b9bbbe;
+      font-size: 12px;
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .feature-controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      button {
+        width: 100%;
+      }
+      select {
+        width: 100%;
+      }
+      textarea {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" role="main" aria-label="Configuração do Servidor">
     <h1 id="guild-name">Configuração do Servidor</h1>
-    <div class="guild-id" id="guild-id">Carregando...</div>
+    <div class="guild-id" id="guild-id" aria-live="polite">Carregando...</div>
     
-    <div class="feature-card">
-      <div class="feature-title">🌸 Sistema de Tickets</div>
+    <section class="feature-card" aria-labelledby="tickets-title">
+      <div class="feature-title" id="tickets-title">🌸 Sistema de Tickets</div>
       <p>Crie um sistema de tickets para suporte e atendimento</p>
       <div class="feature-controls">
-        <label class="toggle-switch">
-          <input type="checkbox" id="tickets-enabled">
+        <label class="toggle-switch" for="tickets-enabled">
+          <input type="checkbox" id="tickets-enabled" aria-describedby="tickets-desc" />
           <span class="slider"></span>
         </label>
-        <label for="tickets-enabled">Ativar Tickets</label>
+        <label for="tickets-enabled" id="tickets-desc">Ativar Tickets</label>
       </div>
       <div id="tickets-settings" style="margin-top: 15px; display: none;">
         <div>
           <label for="tickets-channel">Canal de Tickets:</label>
-          <select id="tickets-channel" style="margin-left: 10px; padding: 5px; background: #36393f; color: #fff; border: 1px solid #202225;">
+          <select id="tickets-channel" aria-label="Selecione o canal de tickets">
             <option value="">Selecione um canal</option>
           </select>
         </div>
-        <button style="margin-top: 10px;">Salvar Configurações</button>
+        <button id="save-tickets" disabled>Salvar Configurações</button>
+        <div id="tickets-save-msg" role="alert" style="margin-top:10px; color:#3ba55c; display:none;">Configurações salvas!</div>
       </div>
-    </div>
+    </section>
     
-    <div class="feature-card">
-      <div class="feature-title">👋 Mensagens de Boas-Vindas</div>
+    <section class="feature-card" aria-labelledby="welcome-title">
+      <div class="feature-title" id="welcome-title">👋 Mensagens de Boas-Vindas</div>
       <p>Configure mensagens automáticas quando novos membros entrarem</p>
       <div class="feature-controls">
-        <label class="toggle-switch">
-          <input type="checkbox" id="welcome-enabled">
+        <label class="toggle-switch" for="welcome-enabled">
+          <input type="checkbox" id="welcome-enabled" aria-describedby="welcome-desc" />
           <span class="slider"></span>
         </label>
-        <label for="welcome-enabled">Ativar Mensagens</label>
+        <label for="welcome-enabled" id="welcome-desc">Ativar Mensagens</label>
       </div>
       <div id="welcome-settings" style="margin-top: 15px; display: none;">
         <div>
           <label for="welcome-channel">Canal de Boas-Vindas:</label>
-          <select id="welcome-channel" style="margin-left: 10px; padding: 5px; background: #36393f; color: #fff; border: 1px solid #202225;">
+          <select id="welcome-channel" aria-label="Selecione o canal de boas-vindas">
             <option value="">Selecione um canal</option>
           </select>
         </div>
         <div style="margin-top: 10px;">
-          <label for="welcome-message">Mensagem:</label><br>
-          <textarea id="welcome-message" rows="3" style="width: 100%; margin-top: 5px; padding: 8px; background: #36393f; color: #fff; border: 1px solid #202225;"></textarea>
+          <label for="welcome-message">Mensagem:</label><br />
+          <textarea id="welcome-message" rows="3" aria-label="Mensagem de boas-vindas"></textarea>
           <small>Variáveis disponíveis: {user}, {server}, {memberCount}</small>
         </div>
-        <button style="margin-top: 10px;">Salvar Configurações</button>
+        <button id="save-welcome" disabled>Salvar Configurações</button>
+        <div id="welcome-save-msg" role="alert" style="margin-top:10px; color:#3ba55c; display:none;">Configurações salvas!</div>
       </div>
-    </div>
+    </section>
     
-    <a href="/callback.html" class="back-link">← Voltar para seus servidores</a>
+    <a href="/callback.html" class="back-link" role="link" aria-label="Voltar para seus servidores">← Voltar para seus servidores</a>
   </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const guildId = params.get('id');
-    
+    const guildNameElem = document.getElementById('guild-name');
+    const guildIdElem = document.getElementById('guild-id');
+
     if (!guildId) {
       document.body.innerHTML = `
-        <div class="container">
+        <div class="container" role="alert">
           <h1>Erro</h1>
           <p>ID do servidor não especificado.</p>
           <a href="/callback.html" class="back-link">← Voltar para seus servidores</a>
         </div>
       `;
     } else {
-      document.getElementById('guild-id').textContent = `ID do Servidor: ${guildId}`;
+      guildIdElem.textContent = `ID do Servidor: ${guildId}`;
       
-      // Simular busca de dados do servidor
+      // Simular nome servidor
       setTimeout(() => {
-        document.getElementById('guild-name').textContent = `Configurações do Servidor: ${guildId}`;
-        
-        // Adicionar eventos para os toggles
-        document.getElementById('tickets-enabled').addEventListener('change', function() {
-          document.getElementById('tickets-settings').style.display = 
-            this.checked ? 'block' : 'none';
-        });
-        
-        document.getElementById('welcome-enabled').addEventListener('change', function() {
-          document.getElementById('welcome-settings').style.display = 
-            this.checked ? 'block' : 'none';
-        });
-        
-        // Aqui você faria uma requisição para buscar as configurações atuais do servidor
-        // e preencheria os campos conforme necessário
-      }, 500);
+        guildNameElem.textContent = `Configurações do Servidor: ${guildId}`;
+        initFeatures();
+      }, 300);
+    }
+
+    function initFeatures() {
+      // Simular canais do servidor (em produção, buscar via API)
+      const channels = [
+        { id: '111', name: '#geral' },
+        { id: '222', name: '#suporte' },
+        { id: '333', name: '#tickets' },
+        { id: '444', name: '#boas-vindas' }
+      ];
+
+      // Popular selects
+      const ticketsChannelSelect = document.getElementById('tickets-channel');
+      const welcomeChannelSelect = document.getElementById('welcome-channel');
+
+      channels.forEach(ch => {
+        const opt1 = document.createElement('option');
+        opt1.value = ch.id;
+        opt1.textContent = ch.name;
+        ticketsChannelSelect.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = ch.id;
+        opt2.textContent = ch.name;
+        welcomeChannelSelect.appendChild(opt2);
+      });
+
+      // Load saved config (localStorage)
+      const savedConfig = JSON.parse(localStorage.getItem(`guildConfig_${guildId}`)) || {};
+
+      // Tickets toggle and settings
+      const ticketsEnabledCheckbox = document.getElementById('tickets-enabled');
+      const ticketsSettingsDiv = document.getElementById('tickets-settings');
+      const saveTicketsBtn = document.getElementById('save-tickets');
+      const ticketsSaveMsg = document.getElementById('tickets-save-msg');
+
+      ticketsEnabledCheckbox.checked = savedConfig.ticketsEnabled || false;
+      ticketsSettingsDiv.style.display = ticketsEnabledCheckbox.checked ? 'block' : 'none';
+
+      if (savedConfig.ticketsChannel) {
+        ticketsChannelSelect.value = savedConfig.ticketsChannel;
+      }
+
+      ticketsEnabledCheckbox.addEventListener('change', () => {
+        ticketsSettingsDiv.style.display = ticketsEnabledCheckbox.checked ? 'block' : 'none';
+        saveTicketsBtn.disabled = !ticketsEnabledCheckbox.checked;
+        ticketsSaveMsg.style.display = 'none';
+      });
+
+      ticketsChannelSelect.addEventListener('change', () => {
+        saveTicketsBtn.disabled = ticketsChannelSelect.value === '';
+        ticketsSaveMsg.style.display = 'none';
+      });
+
+      saveTicketsBtn.disabled = ticketsChannelSelect.value === '';
+
+      saveTicketsBtn.addEventListener('click', () => {
+        const configToSave = {
+          ticketsEnabled: ticketsEnabledCheckbox.checked,
+          ticketsChannel: ticketsChannelSelect.value
+        };
+        saveConfig(configToSave);
+        ticketsSaveMsg.style.display = 'block';
+        setTimeout(() => ticketsSaveMsg.style.display = 'none', 3000);
+        saveTicketsBtn.disabled = true;
+      });
+
+      // Welcome toggle and settings
+      const welcomeEnabledCheckbox = document.getElementById('welcome-enabled');
+      const welcomeSettingsDiv = document.getElementById('welcome-settings');
+      const welcomeChannelSelect = document.getElementById('welcome-channel');
+      const welcomeMessageTextarea = document.getElementById('welcome-message');
+      const saveWelcomeBtn = document.getElementById('save-welcome');
+      const welcomeSaveMsg = document.getElementById('welcome-save-msg');
+
+      welcomeEnabledCheckbox.checked = savedConfig.welcomeEnabled || false;
+      welcomeSettingsDiv.style.display = welcomeEnabledCheckbox.checked ? 'block' : 'none';
+
+      if (savedConfig.welcomeChannel) {
+        welcomeChannelSelect.value = savedConfig.welcomeChannel;
+      }
+      if (savedConfig.welcomeMessage) {
+        welcomeMessageTextarea.value = savedConfig.welcomeMessage;
+      }
+
+      const updateWelcomeSaveBtn = () => {
+        saveWelcomeBtn.disabled = !welcomeEnabledCheckbox.checked
+          || welcomeChannelSelect.value === ''
+          || welcomeMessageTextarea.value.trim() === '';
+        welcomeSaveMsg.style.display = 'none';
+      };
+
+      welcomeEnabledCheckbox.addEventListener('change', () => {
+        welcomeSettingsDiv.style.display = welcomeEnabledCheckbox.checked ? 'block' : 'none';
+        updateWelcomeSaveBtn();
+      });
+
+      welcomeChannelSelect.addEventListener('change', updateWelcomeSaveBtn);
+      welcomeMessageTextarea.addEventListener('input', updateWelcomeSaveBtn);
+
+      saveWelcomeBtn.addEventListener('click', () => {
+        const configToSave = {
+          welcomeEnabled: welcomeEnabledCheckbox.checked,
+          welcomeChannel: welcomeChannelSelect.value,
+          welcomeMessage: welcomeMessageTextarea.value.trim()
+        };
+        saveConfig(configToSave);
+        welcomeSaveMsg.style.display = 'block';
+        setTimeout(() => welcomeSaveMsg.style.display = 'none', 3000);
+        saveWelcomeBtn.disabled = true;
+      });
+
+      function saveConfig(partialConfig) {
+        const existing = JSON.parse(localStorage.getItem(`guildConfig_${guildId}`)) || {};
+        const merged = {...existing, ...partialConfig};
+        localStorage.setItem(`guildConfig_${guildId}`, JSON.stringify(merged));
+      }
     }
   </script>
 </body>
