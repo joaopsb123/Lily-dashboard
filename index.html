@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard da Lily</title>
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #36393f;
       color: #fff;
       margin: 0;
@@ -18,93 +18,121 @@
       min-height: 100vh;
     }
     .container {
-      text-align: center;
-      padding: 40px;
       background: #2f3136;
       border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      max-width: 500px;
-      width: 100%;
+      max-width: 520px;
+      width: 95%;
+      padding: 40px 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      text-align: center;
     }
     h1 {
-      font-size: 32px;
+      font-size: 2.5rem;
       margin-bottom: 20px;
       color: #fff;
-      user-select: none;
     }
     p {
       color: #b9bbbe;
       margin-bottom: 30px;
-      user-select: none;
+      font-size: 1.1rem;
     }
     .login-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 12px 24px;
-      font-size: 16px;
+      padding: 14px 28px;
+      font-size: 18px;
       background: #5865F2;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       text-decoration: none;
-      transition: background 0.2s;
-      user-select: none;
-      width: 100%;
-      max-width: 320px;
-      margin: 0 auto;
+      transition: background 0.2s ease-in-out;
+      font-weight: 600;
     }
-    .login-btn:hover,
-    .login-btn:focus {
+    .login-btn:hover {
       background: #4752C4;
-      outline: none;
     }
     .login-btn i {
-      margin-right: 10px;
-      font-size: 20px;
+      margin-right: 12px;
+      font-size: 22px;
     }
     .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
-      gap: 20px;
       margin-top: 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
       text-align: left;
     }
     .feature {
       background: #40444b;
-      padding: 15px;
+      padding: 18px 20px;
       border-radius: 8px;
-      user-select: none;
-    }
-    .feature h3 {
-      margin-top: 0;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.1);
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 8px;
     }
+    .feature h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+    }
+    .feature p {
+      color: #b9bbbe;
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.3;
+    }
+    .feature i {
+      color: #5865F2;
+    }
+    /* Imagem decorativa no topo */
+    .header-image {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+    @media (max-width: 480px) {
+      .login-btn {
+        width: 100%;
+        font-size: 16px;
+        padding: 14px;
+      }
+    }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
-  <div class="container" role="main" aria-label="Página inicial do Dashboard da Lily">
-    <h1>Dashboard da Lily</h1>
-    <p>Gerencie seu servidor Discord com facilidade e recursos incríveis!</p>
-    <a href="https://discord.com/api/oauth2/authorize?client_id=1392176069070557365&redirect_uri=https%3A%2F%2Flily-dashboard-five.vercel.app%2Fcallback.html&response_type=code&scope=identify%20guilds" class="login-btn" aria-label="Entrar com Discord">
+  <div class="container">
+    <img class="header-image" src="https://cdn.discordapp.com/attachments/1388802898313347155/1393678729095417986/1752349044.png" alt="Banner da Lily" />
+    <h1>🌸 Dashboard da Lily</h1>
+    <p>Gerencie seu servidor Discord com facilidade e estilo</p>
+    
+    <a href="https://discord.com/oauth2/authorize?client_id=1392176069070557365&response_type=code&redirect_uri=https%3A%2F%2Flily-dashboard-five.vercel.app%2Fcallback.html&scope=identify+email+guilds" class="login-btn">
       <i class="fab fa-discord"></i> Entrar com Discord
     </a>
-    <div class="features" aria-label="Principais funcionalidades do bot">
+    
+    <div class="features">
       <div class="feature">
-        <h3>💬 Sistema de Tickets</h3>
-        <p>Atenda sua comunidade com um sistema de suporte fácil de usar.</p>
+        <h3><i class="fas fa-ticket-alt"></i> Tickets</h3>
+        <p>Sistema de tickets para suporte e organização</p>
       </div>
       <div class="feature">
-        <h3>👋 Boas-vindas Automáticas</h3>
-        <p>Envie mensagens personalizadas quando novos membros entrarem.</p>
+        <h3><i class="fas fa-door-open"></i> Boas-Vindas</h3>
+        <p>Mensagens personalizadas para novos membros</p>
       </div>
       <div class="feature">
-        <h3>⚙️ Configurações Personalizadas</h3>
-        <p>Configure canais e mensagens do jeito que quiser.</p>
+        <h3><i class="fas fa-robot"></i> Automoderação</h3>
+        <p>Filtros automáticos para palavras e links</p>
+      </div>
+      <div class="feature">
+        <h3><i class="fas fa-cog"></i> Personalização</h3>
+        <p>Configure seu servidor do seu jeito</p>
       </div>
     </div>
   </div>
