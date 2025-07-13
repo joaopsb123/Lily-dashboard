@@ -5,27 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Callback - Dashboard da Lily</title>
   <style>
+    /* Fonte e cores */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #36393f;
       color: #fff;
+      margin: 0;
+      padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      padding: 0;
-      flex-direction: column;
+      min-height: 100vh;
       text-align: center;
+      flex-direction: column;
     }
-    .loading {
-      font-size: 1.5rem;
-      margin-bottom: 20px;
-    }
-    .error {
-      color: #f04747;
-      font-weight: bold;
-    }
+
+    /* Container principal */
     .dashboard {
       max-width: 600px;
       width: 90%;
@@ -34,18 +29,16 @@
       border-radius: 12px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.3);
       text-align: left;
+      box-sizing: border-box;
     }
-    .dashboard h2 {
-      margin-top: 0;
-      font-size: 2rem;
-      margin-bottom: 15px;
-      color: #fff;
-    }
+
+    /* Cabeçalho usuário */
     .user-info {
       display: flex;
       align-items: center;
       gap: 15px;
       margin-bottom: 25px;
+      flex-wrap: wrap;
     }
     .user-info img {
       border-radius: 50%;
@@ -53,7 +46,25 @@
       height: 72px;
       object-fit: cover;
       border: 2px solid #5865F2;
+      flex-shrink: 0;
     }
+    .user-info div {
+      flex-grow: 1;
+      min-width: 150px;
+    }
+    .user-info h2 {
+      margin: 0 0 6px 0;
+      font-size: 1.8rem;
+      color: #fff;
+    }
+    .user-info p {
+      margin: 0;
+      font-size: 1rem;
+      color: #ccc;
+      word-break: break-word;
+    }
+
+    /* Lista de guilds */
     .guild-list {
       list-style: none;
       padding: 0;
@@ -79,11 +90,15 @@
       border-radius: 50%;
       object-fit: cover;
       background: #2f3136;
+      flex-shrink: 0;
     }
     .guild-name {
       font-weight: 600;
       color: #fff;
       flex-grow: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .status-bot {
       font-size: 0.9rem;
@@ -92,9 +107,43 @@
       background: #23272a;
       padding: 4px 8px;
       border-radius: 8px;
+      user-select: none;
+      flex-shrink: 0;
     }
     .status-bot.absent {
       color: #f04747;
+    }
+
+    /* Mensagens de erro e loading */
+    .loading, .error {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+    .error {
+      color: #f04747;
+      font-weight: bold;
+    }
+
+    /* Responsividade */
+    @media (max-width: 480px) {
+      .dashboard {
+        padding: 20px 15px;
+      }
+      .user-info {
+        justify-content: center;
+      }
+      .guild-list li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .guild-name {
+        white-space: normal;
+        margin-top: 6px;
+      }
+      .status-bot {
+        align-self: flex-start;
+        margin-top: 6px;
+      }
     }
   </style>
 </head>
@@ -142,7 +191,7 @@
       const guildList = document.createElement('ul');
       guildList.classList.add('guild-list');
 
-      if (data.guilds.length === 0) {
+      if (!data.guilds || data.guilds.length === 0) {
         guildList.innerHTML = `<li>Você não tem servidores com o bot ou permissões suficientes.</li>`;
       } else {
         data.guilds.forEach(guild => {
@@ -151,11 +200,10 @@
           const botStatusClass = guild.hasBot ? 'status-bot' : 'status-bot absent';
           li.innerHTML = `
             <img class="guild-icon" src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png" alt="Ícone do servidor" onerror="this.src='https://via.placeholder.com/40?text=?'" />
-            <span class="guild-name">${guild.name}</span>
+            <span class="guild-name" title="${guild.name}">${guild.name}</span>
             <span class="${botStatusClass}">${guild.hasBot ? 'Bot presente' : 'Bot ausente'}</span>
           `;
           li.addEventListener('click', () => {
-            // Redireciona para dashboard do servidor
             window.location.href = `/guild.html?id=${guild.id}`;
           });
           guildList.appendChild(li);
