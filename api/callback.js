@@ -8,22 +8,32 @@ export default async function handler(req, res) {
   params.append('client_secret', '0DNQT5RRwFYPtJ2rk1bQqqElmsIoHdM6');
   params.append('grant_type', 'authorization_code');
   params.append('code', code);
-  params.append('redirect_uri', 'https://lily-dashboard-bdgy.vercel.app/');
-  params.append('scope', 'identify guilds');
+  params.append('redirect_uri', 'https://lily-dashboard-bdgy.vercel.app/callback.html');
+  params.append('scope', 'identify email guilds');
 
-  const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: params
-  });
+  try {
+    const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params
+    });
 
-  const tokenData = await tokenRes.json();
+    const tokenData = await tokenRes.json();
 
-  const userRes = await fetch('https://discord.com/api/users/@me', {
-    headers: { Authorization: `Bearer ${tokenData.access_token}` }
-  });
+    if (!tokenData.access_token) {
+      return res.status(400).json({ error: 'Token inválido', debug: tokenData });
+    }
 
-  const userData = await userRes.json();
+    const userRes = await fetch('https://discord.com/api/users/@me', {
+      headers: {
+        Authorization: `Bearer ${tokenData.access_token}`
+      }
+    });
 
-  res.status(200).json(userData);
+    const userData = await userRes.json();
+
+    res.status(200).json(userData);
+  } catch (err) {
+    res.status(500).json({ error: 'Erro interno', debug: err });
+  }
 }
