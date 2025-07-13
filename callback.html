@@ -2,39 +2,52 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Dashboard Lily</title>
+  <title>Seus Servidores</title>
   <style>
     body { font-family: sans-serif; background: #f9f9f9; text-align: center; margin: 60px auto; max-width: 600px; }
     img { border-radius: 50%; margin-top: 20px; }
     ul { list-style: none; padding: 0; }
-    li { background: #fff; margin: 8px 0; padding: 10px; border-radius: 8px; box-shadow: 0 0 6px rgba(0,0,0,0.1); }
+    li {
+      background: #fff; margin: 12px 0; padding: 16px; border-radius: 8px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    }
+    button {
+      margin-top: 8px; padding: 6px 12px; font-size: 14px;
+      background: #5865F2; color: white; border: none; border-radius: 6px;
+    }
   </style>
 </head>
 <body>
-  <h2>Carregando dados do Discord...</h2>
+  <h2>Carregando seus servidores, Majestade Lily...</h2>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
 
     if (!code) {
-      document.body.innerHTML = "<p>Erro: código de autorização não encontrado.</p>";
+      document.body.innerHTML = "<p>Erro: código não encontrado.</p>";
     } else {
       fetch(`/api/callback?code=${code}`)
         .then(res => res.json())
         .then(data => {
-          if (data.user && data.guilds) {
-            const guildsList = data.guilds.map(g => `<li>${g.name}</li>`).join('');
-            document.body.innerHTML = `
-              <h1>Olá, ${data.user.username}#${data.user.discriminator}</h1>
-              <img src="https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png" width="128" alt="Avatar"/>
-              <p>ID: ${data.user.id}</p>
-              <h2>Seus Servidores:</h2>
-              <ul>${guildsList}</ul>
-            `;
-          } else {
-            document.body.innerHTML = `<p>Erro ao buscar dados do Discord.</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
-          }
+          const guildsDonos = data.guilds.filter(g => g.owner);
+
+          const guildsList = guildsDonos.map(guild => `
+            <li>
+              <strong>${guild.name}</strong><br/>
+              <a href="guild.html?id=${guild.id}">
+                <button>⚙️ Configurar</button>
+              </a>
+            </li>
+          `).join('');
+
+          document.body.innerHTML = `
+            <h1>Olá, ${data.user.username}#${data.user.discriminator}</h1>
+            <img src="https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png" width="128" />
+            <p>ID: ${data.user.id}</p>
+            <h2>Seus Servidores (onde você é dona):</h2>
+            <ul>${guildsList}</ul>
+          `;
         })
         .catch(() => {
           document.body.innerHTML = "<p>Erro ao buscar dados do Discord.</p>";
