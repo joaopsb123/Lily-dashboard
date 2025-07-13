@@ -5,6 +5,7 @@ export default async function handler(req, res) {
   if (!code) return res.status(400).json({ error: 'Código ausente' });
 
   try {
+    // Trocar o code por um access_token
     const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -26,27 +27,26 @@ export default async function handler(req, res) {
       });
     }
 
-    // Adicionando verificação se o bot está no servidor
-    const [user, guilds, botGuilds] = await Promise.all([
-      fetch('https://discord.com/api/users/@me', {
-        headers: { Authorization: `Bearer ${tokenData.access_token}` }
-      }).then(res => res.json()),
-      fetch('https://discord.com/api/users/@me/guilds', {
-        headers: { Authorization: `Bearer ${tokenData.access_token}` }
-      }).then(res => res.json()),
-      fetch('https://discord.com/api/users/@me/guilds', {
-        headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` }
-      }).then(res => res.json()).catch(() => [])
-    ]);
+    const userRequest = await fetch('https://discord.com/api/users/@me', {
+      headers: { Authorization: `Bearer ${tokenData.access_token}` }
+    });
 
-    // Marcando servidores onde o bot está presente
+    const guildsRequest = await fetch('https://discord.com/api/users/@me/guilds', {
+      headers: { Authorization: `Bearer ${tokenData.access_token}` }
+    });
+
+    const user = await userRequest.json();
+    const guilds = await guildsRequest.json();
+
+    // Por enquanto marcamos hasBot false — ajuste isso depois via banco do bot
     const guildsWithBotInfo = guilds.map(guild => ({
       ...guild,
-      hasBot: botGuilds.some(bg => bg.id === guild.id)
+      hasBot: false
     }));
 
     return res.status(200).json({ user, guilds: guildsWithBotInfo });
   } catch (err) {
+    console.error(err);
     return res.status(500).json({ error: 'Erro interno', debug: err.message });
   }
 }
