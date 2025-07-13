@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Carregando...</title>
+</head>
+<body>
+  <h2>Carregando dados do Discord...</h2>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+
+    if (!code) {
+      document.body.innerHTML = "<p>Erro: código de autorização não encontrado.</p>";
+    } else {
+      fetch(`/api/callback?code=${code}`)
+        .then(res => res.json())
+        .then(data => {
+          document.body.innerHTML = `
+            <h1>Olá, ${data.username}#${data.discriminator}</h1>
+            <img src="https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png" width="128">
+            <p>ID: ${data.id}</p>
+          `;
+        })
+        .catch(err => {
+          document.body.innerHTML = "<p>Erro ao buscar dados do Discord.</p>";
+        });
+    }
+  </script>
+</body>
+</html>
