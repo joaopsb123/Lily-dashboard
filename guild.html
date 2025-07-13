@@ -2,30 +2,200 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Configuração do Servidor</title>
+  <title>Configuração do Servidor | Lily Dashboard</title>
   <style>
-    body { font-family: sans-serif; background: #fff; max-width: 600px; margin: 60px auto; text-align: center; }
-    button {
-      margin: 12px; padding: 10px 20px; font-size: 16px;
-      background: #5865F2; color: white; border: none; border-radius: 6px;
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #36393f;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
     }
-    button:hover { background: #4752C4; }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #2f3136;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #fff;
+      margin-bottom: 5px;
+    }
+    .guild-id {
+      color: #b9bbbe;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .feature-card {
+      background: #40444b;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .feature-title {
+      font-weight: bold;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .feature-controls {
+      margin-top: 15px;
+    }
+    button {
+      background: #5865F2;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #4752C4;
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #72767d;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #3ba55c;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #5865F2;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-  <h1>⚙️ Configuração do Servidor</h1>
-  <p id="server-name">Carregando ID...</p>
-
-  <button onclick="alert('🔧 Em breve: sistema de tickets')">Tickets</button>
-  <button onclick="alert('👋 Em breve: mensagens de boas-vindas e saídas')">Entradas / Saídas</button>
+  <div class="container">
+    <h1 id="guild-name">Configuração do Servidor</h1>
+    <div class="guild-id" id="guild-id">Carregando...</div>
+    
+    <div class="feature-card">
+      <div class="feature-title">🌸 Sistema de Tickets</div>
+      <p>Crie um sistema de tickets para suporte e atendimento</p>
+      <div class="feature-controls">
+        <label class="toggle-switch">
+          <input type="checkbox" id="tickets-enabled">
+          <span class="slider"></span>
+        </label>
+        <label for="tickets-enabled">Ativar Tickets</label>
+      </div>
+      <div id="tickets-settings" style="margin-top: 15px; display: none;">
+        <div>
+          <label for="tickets-channel">Canal de Tickets:</label>
+          <select id="tickets-channel" style="margin-left: 10px; padding: 5px; background: #36393f; color: #fff; border: 1px solid #202225;">
+            <option value="">Selecione um canal</option>
+          </select>
+        </div>
+        <button style="margin-top: 10px;">Salvar Configurações</button>
+      </div>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-title">👋 Mensagens de Boas-Vindas</div>
+      <p>Configure mensagens automáticas quando novos membros entrarem</p>
+      <div class="feature-controls">
+        <label class="toggle-switch">
+          <input type="checkbox" id="welcome-enabled">
+          <span class="slider"></span>
+        </label>
+        <label for="welcome-enabled">Ativar Mensagens</label>
+      </div>
+      <div id="welcome-settings" style="margin-top: 15px; display: none;">
+        <div>
+          <label for="welcome-channel">Canal de Boas-Vindas:</label>
+          <select id="welcome-channel" style="margin-left: 10px; padding: 5px; background: #36393f; color: #fff; border: 1px solid #202225;">
+            <option value="">Selecione um canal</option>
+          </select>
+        </div>
+        <div style="margin-top: 10px;">
+          <label for="welcome-message">Mensagem:</label><br>
+          <textarea id="welcome-message" rows="3" style="width: 100%; margin-top: 5px; padding: 8px; background: #36393f; color: #fff; border: 1px solid #202225;"></textarea>
+          <small>Variáveis disponíveis: {user}, {server}, {memberCount}</small>
+        </div>
+        <button style="margin-top: 10px;">Salvar Configurações</button>
+      </div>
+    </div>
+    
+    <a href="/callback.html" class="back-link">← Voltar para seus servidores</a>
+  </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const guildId = params.get('id');
-
-    document.getElementById("server-name").textContent = `Servidor ID: ${guildId}`;
-
-    // Aqui futuramente você pode buscar configs no backend
+    
+    if (!guildId) {
+      document.body.innerHTML = `
+        <div class="container">
+          <h1>Erro</h1>
+          <p>ID do servidor não especificado.</p>
+          <a href="/callback.html" class="back-link">← Voltar para seus servidores</a>
+        </div>
+      `;
+    } else {
+      document.getElementById('guild-id').textContent = `ID do Servidor: ${guildId}`;
+      
+      // Simular busca de dados do servidor
+      setTimeout(() => {
+        document.getElementById('guild-name').textContent = `Configurações do Servidor: ${guildId}`;
+        
+        // Adicionar eventos para os toggles
+        document.getElementById('tickets-enabled').addEventListener('change', function() {
+          document.getElementById('tickets-settings').style.display = 
+            this.checked ? 'block' : 'none';
+        });
+        
+        document.getElementById('welcome-enabled').addEventListener('change', function() {
+          document.getElementById('welcome-settings').style.display = 
+            this.checked ? 'block' : 'none';
+        });
+        
+        // Aqui você faria uma requisição para buscar as configurações atuais do servidor
+        // e preencheria os campos conforme necessário
+      }, 500);
+    }
   </script>
 </body>
 </html>
