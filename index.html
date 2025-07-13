@@ -2,8 +2,9 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard da Lily</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" />
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -29,10 +30,12 @@
       font-size: 32px;
       margin-bottom: 20px;
       color: #fff;
+      user-select: none;
     }
     p {
       color: #b9bbbe;
       margin-bottom: 30px;
+      user-select: none;
     }
     .login-btn {
       display: inline-flex;
@@ -47,9 +50,15 @@
       cursor: pointer;
       text-decoration: none;
       transition: background 0.2s;
+      user-select: none;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
     }
-    .login-btn:hover {
+    .login-btn:hover,
+    .login-btn:focus {
       background: #4752C4;
+      outline: none;
     }
     .login-btn i {
       margin-right: 10px;
@@ -57,7 +66,7 @@
     }
     .features {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
       gap: 20px;
       margin-top: 40px;
       text-align: left;
@@ -66,6 +75,7 @@
       background: #40444b;
       padding: 15px;
       border-radius: 8px;
+      user-select: none;
     }
     .feature h3 {
       margin-top: 0;
@@ -74,33 +84,27 @@
       gap: 8px;
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>🌸 Dashboard da Lily</h1>
-    <p>Gerencie seu servidor Discord com facilidade e estilo</p>
-    
-    <a href="https://discord.com/oauth2/authorize?client_id=1392176069070557365&response_type=code&redirect_uri=https%3A%2F%2Flily-dashboard-five.vercel.app%2Fcallback.html&scope=identify+email+guilds" class="login-btn">
+  <div class="container" role="main" aria-label="Página inicial do Dashboard da Lily">
+    <h1>Dashboard da Lily</h1>
+    <p>Gerencie seu servidor Discord com facilidade e recursos incríveis!</p>
+    <a href="https://discord.com/api/oauth2/authorize?client_id=1392176069070557365&redirect_uri=https%3A%2F%2Flily-dashboard-five.vercel.app%2Fcallback.html&response_type=code&scope=identify%20guilds" class="login-btn" aria-label="Entrar com Discord">
       <i class="fab fa-discord"></i> Entrar com Discord
     </a>
-    
-    <div class="features">
+    <div class="features" aria-label="Principais funcionalidades do bot">
       <div class="feature">
-        <h3><i class="fas fa-ticket-alt"></i> Tickets</h3>
-        <p>Sistema de tickets para suporte e organização</p>
+        <h3>💬 Sistema de Tickets</h3>
+        <p>Atenda sua comunidade com um sistema de suporte fácil de usar.</p>
       </div>
       <div class="feature">
-        <h3><i class="fas fa-door-open"></i> Boas-Vindas</h3>
-        <p>Mensagens personalizadas para novos membros</p>
+        <h3>👋 Boas-vindas Automáticas</h3>
+        <p>Envie mensagens personalizadas quando novos membros entrarem.</p>
       </div>
       <div class="feature">
-        <h3><i class="fas fa-robot"></i> Automoderação</h3>
-        <p>Filtros automáticos para palavras e links</p>
-      </div>
-      <div class="feature">
-        <h3><i class="fas fa-cog"></i> Personalização</h3>
-        <p>Configure seu servidor do seu jeito</p>
+        <h3>⚙️ Configurações Personalizadas</h3>
+        <p>Configure canais e mensagens do jeito que quiser.</p>
       </div>
     </div>
   </div>
