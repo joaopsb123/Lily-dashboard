@@ -9,8 +9,8 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
-        client_id: '1392176069070557365',
-        client_secret: '0DNQT5RRwFYPtJ2rk1bQqqElmsIoHdM6',
+        client_id: process.env.DISCORD_CLIENT_ID || '1392176069070557365',
+        client_secret: process.env.DISCORD_CLIENT_SECRET || '0DNQT5RRwFYPtJ2rk1bQqqElmsIoHdM6',
         grant_type: 'authorization_code',
         code,
         redirect_uri
@@ -26,17 +26,26 @@ export default async function handler(req, res) {
       });
     }
 
-    const userResponse = await fetch('https://discord.com/api/users/@me', {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` }
-    });
-    const guildsResponse = await fetch('https://discord.com/api/users/@me/guilds', {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` }
-    });
+    // Adicionando verificação se o bot está no servidor
+    const [user, guilds, botGuilds] = await Promise.all([
+      fetch('https://discord.com/api/users/@me', {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` }
+      }).then(res => res.json()),
+      fetch('https://discord.com/api/users/@me/guilds', {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` }
+      }).then(res => res.json()),
+      fetch('https://discord.com/api/users/@me/guilds', {
+        headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` }
+      }).then(res => res.json()).catch(() => [])
+    ]);
 
-    const user = await userResponse.json();
-    const guilds = await guildsResponse.json();
+    // Marcando servidores onde o bot está presente
+    const guildsWithBotInfo = guilds.map(guild => ({
+      ...guild,
+      hasBot: botGuilds.some(bg => bg.id === guild.id)
+    }));
 
-    return res.status(200).json({ user, guilds });
+    return res.status(200).json({ user, guilds: guildsWithBotInfo });
   } catch (err) {
     return res.status(500).json({ error: 'Erro interno', debug: err.message });
   }
