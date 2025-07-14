@@ -91,37 +91,30 @@
         <input type="checkbox" id="welcome_enabled" />
         Ativar mensagem de boas-vindas
       </label>
-
       <label for="welcome_channel">ID do canal de boas-vindas:</label>
       <input type="text" id="welcome_channel" placeholder="Ex: 123456789012345678" />
-
       <label for="welcome_message">Mensagem de boas-vindas:</label>
       <textarea id="welcome_message" rows="3" placeholder="Ex: Bem-vindo(a) {user} ao {server}!"></textarea>
-
       <label>
         <input type="checkbox" id="tickets_enabled" />
         Ativar sistema de tickets
       </label>
-
       <button type="submit">Salvar Configurações</button>
       <p id="status" class="status-msg"></p>
     </form>
   </div>
-
   <script>
     // Pega o ID do servidor da query string
     function getQueryParam(param) {
       const params = new URLSearchParams(window.location.search);
       return params.get(param);
     }
-
     // Atualiza o formulário com dados do servidor
     async function loadConfig(guildId) {
       try {
         const res = await fetch(`/api/guild?id=${guildId}`);
         if (!res.ok) throw new Error("Não foi possível carregar as configurações");
         const data = await res.json();
-
         // Preenche os campos do formulário
         document.getElementById('welcome_enabled').checked = data.welcome_enabled ?? false;
         document.getElementById('welcome_channel').value = data.welcome_channel ?? '';
@@ -132,7 +125,6 @@
         document.getElementById('status').style.color = "#f04747";
       }
     }
-
     // Salva configurações via API
     async function saveConfig(guildId, config) {
       try {
@@ -149,7 +141,6 @@
         document.getElementById('status').style.color = "#f04747";
       }
     }
-
     // Evento submit do formulário
     document.getElementById('configForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -171,7 +162,6 @@
       }
       await saveConfig(guildId, config);
     });
-
     // Ao carregar página
     window.addEventListener('load', () => {
       const guildId = getQueryParam('id');
