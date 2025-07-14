@@ -1,46 +1,25 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Lily Dashboard - Login</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Lily Dashboard</title>
 <style>
-  body {
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
-  }
+  body{margin:0;padding:0;font-family:sans-serif;background:#4A148C;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;}
+  .container{background:#6A1B9A;padding:40px;border-radius:10px;text-align:center;}
+  button{padding:12px 24px;font-size:1.2rem;border:none;border-radius:6px;color:#6A1B9A;background:#fff;cursor:pointer;transition:0.2s;}
+  button:hover{background:#f3e5f5;}
 </style>
 </head>
-<body class="min-h-screen flex flex-col justify-center items-center text-white font-sans px-4">
-
-  <h1 class="text-5xl font-bold mb-6 drop-shadow-lg">Lily Dashboard</h1>
-  <p class="mb-10 text-lg max-w-xl text-center drop-shadow-md">
-    Sistema de Configuração Discord Moderno e Simples.<br />
-    Faça login com sua conta Discord para começar.
-  </p>
-
-  <button id="loginBtn" 
-    class="bg-white text-indigo-600 px-8 py-3 rounded-xl font-semibold text-xl hover:bg-indigo-100 transition"
-  >Login com Discord</button>
-
-  <footer class="mt-24 text-sm opacity-70 select-none">
-    © 2025 Lily Dashboard - Feito com ❤️
-  </footer>
-
+<body>
+  <div class="container">
+    <h1>Lily Dashboard</h1>
+    <p>Gerencie seu servidor Discord com estilo</p>
+    <button id="login">Login com Discord</button>
+  </div>
 <script>
   const CLIENT_ID = '1392176069070557365';
   const REDIRECT_URI = 'https://lily-dashboard-five.vercel.app/callback.html';
-  const SCOPE = 'identify guilds';
-
-  document.getElementById('loginBtn').addEventListener('click', () => {
-    const url = new URL('https://discord.com/api/oauth2/authorize');
-    url.searchParams.set('client_id', CLIENT_ID);
-    url.searchParams.set('redirect_uri', REDIRECT_URI);
-    url.searchParams.set('response_type', 'token');
-    url.searchParams.set('scope', SCOPE);
-    window.location.href = url.toString();
-  });
+  document.getElementById('login').onclick = () => {
+    window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify guilds`;
+  };
 </script>
-
 </body>
 </html>
