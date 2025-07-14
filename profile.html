@@ -1,111 +1,70 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<title>Perfil</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    max-width: 600px;
-    margin: 30px auto;
-    background: #f0f0f0;
-    padding: 15px;
-  }
-  button {
-    background-color: #5865f2;
-    border: none;
-    color: white;
-    padding: 8px 14px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: #4752c4;
-  }
-  #profile-info {
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 5px #aaa;
-    text-align: center;
-  }
-  #profile-info img {
-    border-radius: 50%;
-    width: 100px;
-    margin-bottom: 10px;
-  }
-  textarea {
-    width: 100%;
-    height: 80px;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    resize: vertical;
-  }
-</style>
+  <meta charset="UTF-8"/>
+  <title>Perfil – Lily Social</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
+    body{background:#2f3136;color:#dcddde}
+    nav{background:#202225;padding:10px 20px;display:flex;align-items:center}
+    nav a{color:#b9bbbe;margin-right:20px;text-decoration:none}
+    nav a.active,nav a:hover{color:white}
+    nav .spacer{flex:1}
+    nav button{background:#5865F2;border:none;padding:6px 12px;border-radius:4px;color:white;cursor:pointer}
+    .container{max-width:600px;margin:20px auto;background:#36393f;padding:20px;border-radius:8px}
+    .profile-header{text-align:center;margin-bottom:20px}
+    .profile-header img{border-radius:50%;width:100px;height:100px}
+    .profile-header h2{margin-top:10px}
+    .bio{background:#2f3136;padding:15px;border-radius:6px;min-height:80px}
+    .bio input{width:100%;background:#202225;color:white;padding:8px;border:none;border-radius:4px}
+    .bio button{margin-top:10px;background:#5865F2;border:none;color:white;padding:8px 14px;border-radius:4px;cursor:pointer}
+  </style>
 </head>
 <body>
+  <nav>
+    <a href="feed.html">Feed</a>
+    <a href="profile.html" class="active">Perfil</a>
+    <a href="search.html">Buscar</a>
+    <a href="games.html">Jogos</a>
+    <div class="spacer"></div>
+    <button onclick="logout()">Logout</button>
+  </nav>
 
-<button onclick="window.location='feed.html'">Voltar ao Feed</button>
+  <div class="container">
+    <div class="profile-header">
+      <img id="ava"/>
+      <h2 id="name"></h2>
+    </div>
+    <div class="bio">
+      <div id="bioText"></div>
+      <input id="bioIn" placeholder="Edite sua bio..."/>
+      <button onclick="saveBio()">Salvar</button>
+    </div>
+  </div>
 
-<div id="profile-info">
-  <h2 id="name"></h2>
-  <img id="ava" alt="avatar" />
-  <p id="bio"></p>
-  <textarea id="nbio" placeholder="Escreva sua bio..."></textarea><br />
-  <button onclick="saveBio()">Salvar Bio</button>
-</div>
+  <script>
+    const data = JSON.parse(localStorage.getItem('lilyData')||'{}');
+    if(!data.user) return logout();
+    function logout(){ localStorage.clear(); location.href='index.html'; }
 
-<script>
-const data = JSON.parse(localStorage.getItem('lilyData') || '{}');
-const userQ = new URLSearchParams(location.search).get('user');
-const me = data.user.username + '#' + data.user.discriminator;
-const isMe = !userQ || userQ === me;
+    document.getElementById('ava').src = data.user.avatarUrl;
+    document.getElementById('name').textContent = `${data.user.username}#${data.user.discriminator}`;
 
-function load() {
-  if (isMe) {
-    fetch('/api/users.js?user=' + encodeURIComponent(JSON.stringify(data.user)))
-      .then(r => r.json())
-      .then(u => {
-        document.getElementById('name').textContent = u.username;
-        document.getElementById('bio').textContent = u.bio;
-        document.getElementById('nbio').value = u.bio;
-        document.getElementById('ava').src = u.avatar;
-      });
-  } else {
-    fetch('/api/users.js?q=' + encodeURIComponent(userQ))
-      .then(r => r.json())
-      .then(users => {
-        if (users.length > 0) {
-          const u = users[0];
-          document.getElementById('name').textContent = u.username;
-          document.getElementById('bio').textContent = u.bio || 'Sem bio';
-          document.getElementById('nbio').style.display = 'none';
-          document.querySelector('button').style.display = 'none';
-          document.getElementById('ava').src = 'https://cdn.discordapp.com/embed/avatars/' + (Math.floor(Math.random() * 5)) + '.png';
-        } else {
-          document.getElementById('name').textContent = 'Usuário não encontrado';
-          document.getElementById('bio').textContent = '';
-          document.getElementById('nbio').style.display = 'none';
-          document.querySelector('button').style.display = 'none';
-          document.getElementById('ava').src = '';
-        }
-      });
-  }
-}
-
-function saveBio() {
-  const bio = document.getElementById('nbio').value;
-  fetch('/api/users.js', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ user: data.user, bio })
-  }).then(load);
-}
-
-load();
-</script>
-
+    function loadBio(){
+      fetch('/api/users.js?user='+encodeURIComponent(JSON.stringify(data.user)))
+        .then(r=>r.json()).then(u=>{
+          document.getElementById('bioText').textContent = u.bio||'Sem bio ainda.';
+          document.getElementById('bioIn').value = u.bio||'';
+        });
+    }
+    function saveBio(){
+      const b = document.getElementById('bioIn').value;
+      fetch('/api/users.js',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({user:data.user,bio:b})
+      }).then(loadBio);
+    }
+    loadBio();
+  </script>
 </body>
 </html>
