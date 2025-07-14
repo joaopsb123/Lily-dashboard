@@ -1,51 +1,88 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard da Lily</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <meta charset="UTF‑8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Lily Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #36393f; color: #fff; margin:0; padding:0; display:flex; justify-content:center; align-items:center; min-height:100vh; }
-    .container { background:#2f3136; border-radius:8px; max-width:520px; width:95%; padding:40px 30px; box-shadow:0 8px 20px rgba(0,0,0,0.3); text-align:center; }
-    h1 { font-size:2.5rem; margin-bottom:20px; color:#fff; }
-    p { color:#b9bbbe; margin-bottom:30px; font-size:1.1rem; }
-    .login-btn { display:inline-flex; align-items:center; justify-content:center; padding:14px 28px; font-size:18px; background:#5865F2; color:#fff; border:none; border-radius:8px; cursor:pointer; text-decoration:none; transition:background 0.2s ease-in-out; font-weight:600; }
-    .login-btn:hover { background:#4752C4; }
-    .login-btn i { margin-right:12px; font-size:22px; }
-    .features { margin-top:40px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; text-align:left; }
-    .feature { background:#40444b; padding:18px 20px; border-radius:8px; box-shadow:inset 0 0 8px rgba(0,0,0,0.1); display:flex; flex-direction:column; gap:8px; }
-    .feature h3 { margin:0; font-size:1.25rem; display:flex; align-items:center; gap:10px; color:#fff; }
-    .feature p { color:#b9bbbe; margin:0; font-size:1rem; line-height:1.3; }
-    .feature i { color:#5865F2; }
-    .header-image { max-width:100%; border-radius:12px; margin-bottom:30px; box-shadow:0 8px 20px rgba(0,0,0,0.25); }
-    @media (max-width:480px) { .login-btn { width:100%; font-size:16px; padding:14px; } }
+    :root {
+      --bg: #f5f7fa;
+      --accent: #0E65E3;
+      --surface: #fff;
+      --text: #43484A;
+      --muted: #A0B4C1;
+      --radius: 12px;
+      --shadow: rgba(0,0,0,0.05);
+    }
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      font-family:'Inter',sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display:flex; justify-content:center; align-items:center;
+      min-height:100vh;
+    }
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 20px var(--shadow);
+      max-width:500px; width:90%; padding:2rem; text-align:center;
+    }
+    .card h1 {
+      font-size:2rem; font-weight:700; margin-bottom:0.5rem;
+    }
+    .card p { color: var(--muted); margin-bottom:1.5rem; }
+    .btn {
+      display:inline-block;
+      background: var(--accent);
+      color:#fff;
+      padding:0.75rem 1.5rem;
+      border-radius: var(--radius);
+      font-weight:600;
+      text-decoration:none;
+      transition: background 0.2s ease;
+    }
+    .btn:hover { background:#01902C; }
+    .features {
+      margin-top:2rem;
+      text-align:left;
+    }
+    .feature {
+      margin-top:1rem;
+      padding:1rem;
+      border-radius: var(--radius);
+      background: var(--bg);
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    .feature h3 {
+      margin-bottom:0.5rem;
+      font-size:1.1rem;
+      font-weight:600;
+    }
+    .feature p { color:var(--muted); font-size:0.95rem; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img class="header-image" src="https://cdn.discordapp.com/attachments/1388802898313347155/1393678729095417986/1752349044.png" alt="Banner da Lily" />
-    <h1>🌸 Dashboard da Lily</h1>
-    <p>Gerencie seu servidor Discord com facilidade e estilo</p>
-    <a href="https://discord.com/oauth2/authorize?client_id=1392176069070557365&response_type=code&redirect_uri=https%3A%2F%2Flocalhost%3A8000%2Fcallback.html&scope=identify+guilds" class="login-btn">
-      <i class="fab fa-discord"></i> Entrar com Discord
+  <div class="card">
+    <img src="https://loritta.website/assets/brand/loritta-logo.svg" alt="Loritta style" style="width:120px; margin-bottom:1.5rem;">
+    <h1>Bem-vinda à Lily</h1>
+    <p>Interface baseada no design da Loritta — moderno, clean e amigável.</p>
+    <a class="btn" href="https://discord.com/oauth2/authorize?client_id=1392176069070557365&response_type=code&redirect_uri=https%3A%2F%2Flily-dashboard-five.vercel.app%2Fcallback.html&scope=identify+guilds">
+      Entrar com Discord
     </a>
     <div class="features">
       <div class="feature">
-        <h3><i class="fas fa-ticket-alt"></i> Tickets</h3>
-        <p>Sistema de tickets para suporte e organização</p>
+        <h3>🎟️ Tickets</h3>
+        <p>Abra tickets diretamente pelo painel de forma simples e rápida.</p>
       </div>
       <div class="feature">
-        <h3><i class="fas fa-door-open"></i> Boas-Vindas</h3>
-        <p>Mensagens personalizadas para novos membros</p>
+        <h3>🎉 Boas‑vindas</h3>
+        <p>Mensagens automáticas e personalizadas aos novos membros.</p>
       </div>
       <div class="feature">
-        <h3><i class="fas fa-robot"></i> Automoderação</h3>
-        <p>Filtros automáticos para palavras e links</p>
-      </div>
-      <div class="feature">
-        <h3><i class="fas fa-cog"></i> Personalização</h3>
-        <p>Configure seu servidor do seu jeito</p>
+        <h3>🛠️ Automoderação</h3>
+        <p>Filtros contra spam, links indesejados e conteúdo impróprio.</p>
       </div>
     </div>
   </div>
