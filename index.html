@@ -5,53 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Lily Social</title>
   <style>
-    * { box-sizing: border-box; margin:0; padding:0; }
+    * { box-sizing:border-box; margin:0; padding:0; }
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #18191c;
-      color: #e4e6eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
+      font-family:'Segoe UI',sans-serif;
+      background:#18191c;
+      color:#e4e6eb;
+      display:flex; align-items:center; justify-content:center;
+      height:100vh; text-align:center;
     }
     .card {
-      background: #242526;
-      padding: 40px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      background:#242526;
+      padding:40px; border-radius:8px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.6);
     }
-    .card h1 {
-      margin-bottom: 20px;
-      font-size: 2.5rem;
-      color: #fff;
-    }
-    .card p {
-      color: #b0b3b8;
-      margin-bottom: 30px;
-    }
+    .card h1 { color:#fff; margin-bottom:20px; font-size:2.5rem; }
+    .card p { color:#b0b3b8; margin-bottom:30px; }
     .btn {
-      display: inline-block;
-      background: #5865f2;
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: 6px;
-      font-size: 1rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: background 0.2s;
+      display:inline-block;
+      background:#5865F2; color:#fff;
+      padding:12px 24px; border-radius:6px;
+      font-size:1rem; font-weight:600;
+      text-decoration:none; transition:.2s;
     }
-    .btn:hover {
-      background: #4752c4;
-    }
+    .btn:hover { background:#4752C4; }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>Lily Social</h1>
-    <p>Faça login com Discord para entrar na sua rede.</p>
-    <a class="btn" href="https://discord.com/oauth2/authorize?client_id=1392176069070557365&redirect_uri=https%3A%2F%2Flily-dashboard-five.vercel.app%2Fcallback.html&response_type=code&scope=identify%20guilds">
+    <p>Faça login com Discord para acessar sua rede.</p>
+    <a class="btn"
+      href="https://discord.com/oauth2/authorize?client_id=1392176069070557365&redirect_uri=https%3A%2F%2Flily-dashboard-five.vercel.app%2Fcallback.html&response_type=code&scope=identify%20guilds">
       Entrar com Discord
     </a>
   </div>
