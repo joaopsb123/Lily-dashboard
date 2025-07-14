@@ -5,112 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard da Lily</title>
   <style>
-    :root {
-      --bg: #18191c;
-      --panel: #2f3136;
-      --accent: #5865F2;
-      --error: #f04747;
-      --success: #43b581;
-      --text: #ffffff;
-      --muted: #b9bbbe;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      text-align: center;
-    }
-    .dashboard {
-      background: var(--panel);
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      width: 95%;
-      max-width: 650px;
-    }
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 25px;
-    }
-    .user-info img {
-      border-radius: 50%;
-      width: 70px;
-      height: 70px;
-      border: 2px solid var(--accent);
-    }
-    .guild-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .guild-list li {
-      display: flex;
-      align-items: center;
-      background: #40444b;
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      transition: background 0.2s;
-      cursor: pointer;
-    }
-    .guild-list li:hover {
-      background: var(--accent);
-    }
-    .guild-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: var(--panel);
-    }
-    .guild-name {
-      font-weight: 600;
-      color: var(--text);
-      flex-grow: 1;
-      margin-left: 12px;
-      text-align: left;
-    }
-    .status-bot {
-      font-size: 0.8rem;
-      font-weight: bold;
-      background: #23272a;
-      padding: 4px 8px;
-      border-radius: 6px;
-      color: var(--success);
-    }
-    .status-bot.absent {
-      color: var(--error);
-    }
-    .loading,
-    .error {
-      font-size: 1.2rem;
-      margin-top: 20px;
-    }
-    .error {
-      color: var(--error);
-    }
-    @media screen and (max-width: 480px) {
-      .user-info {
-        flex-direction: column;
-        align-items: center;
-      }
-      .guild-name {
-        text-align: center;
-        margin: 0;
-      }
-      .guild-list li {
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-      }
+    :root { --bg:#18191c; --panel:#2f3136; --accent:#5865F2; --error:#f04747; --success:#43b581; --text:#fff; --muted:#b9bbbe; }
+    body { margin:0; padding:0; font-family:'Segoe UI',T sans-serif; background:var(--bg); color:var(--text); display:flex; justify-content:center; align-items:center; min-height:100vh; text-align:center; }
+    .dashboard { background:var(--panel); padding:30px; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.3); width:95%; max-width:650px; }
+    .user-info { display:flex; align-items:center; gap:16px; margin-bottom:25px; }
+    .user-info img { border-radius:50%; width:70px; height:70px; border:2px solid var(--accent); }
+    .guild-list { list-style:none; padding:0; margin:0; }
+    .guild-list li { display:flex; align-items:center; background:#40444b; padding:12px 16px; border-radius:8px; margin-bottom:12px; transition:background .2s; cursor:pointer; }
+    .guild-list li:hover { background:var(--accent); }
+    .guild-icon { width:40px; height:40px; border-radius:50%; object-fit:cover; background:var(--panel); }
+    .guild-name { font-weight:600; color:var(--text); flex-grow:1; margin-left:12px; text-align:left; }
+    .status-bot { font-size:.8rem; font-weight:bold; background:#23272a; padding:4px 8px; border-radius:6px; color:var(--success); }
+    .status-bot.absent { color:var(--error); }
+    .loading, .error { font-size:1.2rem; margin-top:20px; }
+    .error { color:var(--error); }
+    @media (max-width:480px) {
+      .user-info { flex-direction:column; align-items:center; }
+      .guild-name { text-align:center; margin:0; }
+      .guild-list li { flex-direction:column; align-items:center; gap:8px; }
     }
   </style>
 </head>
@@ -119,66 +31,41 @@
     <div class="loading">Carregando informações do Discord...</div>
   </div>
   <script>
-    async function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
+    async function getQueryParam(p){return new URLSearchParams(location.search).get(p);}
+    async function fetchUserData(code){
+      const res = await fetch(`/api/callback?code=${code}`);
+      if(!res.ok) throw new Error("Erro ao obter dados");
+      return res.json();
     }
-    async function fetchUserData(code) {
-      const response = await fetch(`/api/callback?code=${code}`);
-      if (!response.ok) throw new Error("Erro ao obter dados do servidor");
-      return await response.json();
-    }
-    function renderDashboard(data) {
-      const root = document.getElementById("root");
-      root.innerHTML = "";
-      const dash = document.createElement("div");
-      dash.classList.add("dashboard");
-      const userDiv = document.createElement("div");
-      userDiv.classList.add("user-info");
-      userDiv.innerHTML = `
-        <img src="${data.user.avatarUrl}" alt="Avatar do usuário" />
-        <div>
-          <h2>Olá, ${data.user.username}!</h2>
-          <p style="color: var(--muted); font-size: 0.9rem;">ID: ${data.user.id}</p>
-        </div>
-      `;
-      dash.appendChild(userDiv);
-      const guildList = document.createElement("ul");
-      guildList.classList.add("guild-list");
-      if (data.guilds.length === 0) {
-        guildList.innerHTML = `<li><span class="guild-name">Você não tem servidores com permissões suficientes.</span></li>`;
+    function renderDashboard(d){
+      const root = document.getElementById("root"); root.innerHTML="";
+      const dash = document.createElement("div"); dash.classList.add("dashboard");
+      const ui = document.createElement("div"); ui.classList.add("user-info");
+      ui.innerHTML = `<img src="${d.user.avatarUrl}" alt="Avatar"/><div><h2>Olá, ${d.user.username}!</h2><p style="color:var(--muted);font-size:.9rem;">ID: ${d.user.id}</p></div>`;
+      dash.append(ui);
+      const ul = document.createElement("ul"); ul.classList.add("guild-list");
+      if(!d.guilds.length){
+        ul.innerHTML=`<li><span class="guild-name">Você não tem servidores com permissões suficientes.</span></li>`;
       } else {
-        data.guilds.forEach((guild) => {
-          const li = document.createElement("li");
-          const botStatusClass = guild.hasBot ? "status-bot" : "status-bot absent";
-          li.innerHTML = `
-            <img class="guild-icon" src=" https://cdn.discordapp.com/icons/ ${guild.id}/${guild.icon}.png" alt="Ícone do servidor" onerror="this.src='https://via.placeholder.com/40?text=?'" />
-            <span class="guild-name">${guild.name}</span>
-            <span class="${botStatusClass}">${guild.hasBot ? "Bot presente" : "Bot ausente"}</span>
-          `;
-          li.addEventListener("click", () => {
-            window.location.href = `/guild.html?id=${guild.id}`;
-          });
-          guildList.appendChild(li);
+        d.guilds.forEach(g=>{
+          const li=document.createElement("li");
+          const cls = g.hasBot?"status-bot":"status-bot absent";
+          li.innerHTML=`
+            <img class="guild-icon" src="https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png" onerror="this.src='https://via.placeholder.com/40?text=?'"/>
+            <span class="guild-name">${g.name}</span>
+            <span class="${cls}">${g.hasBot?"Bot presente":"Bot ausente"}</span>`;
+          li.onclick=()=> location.href=`/guild.html?id=${g.id}`;
+          ul.append(li);
         });
       }
-      dash.appendChild(guildList);
-      root.appendChild(dash);
+      dash.append(ul); root.append(dash);
     }
-    async function main() {
+    (async()=>{
       const code = await getQueryParam("code");
-      if (!code) {
-        document.getElementById("root").innerHTML = '<p class="error">Código OAuth2 ausente na URL.</p>';
-        return;
-      }
-      try {
-        const data = await fetchUserData(code);
-        renderDashboard(data);
-      } catch (err) {
-        document.getElementById("root").innerHTML = `<p class="error">Erro ao carregar dados: ${err.message}</p>`;
-      }
-    }
-    main();
+      if(!code) return document.getElementById("root").innerHTML = '<p class="error">Código OAuth2 ausente na URL.</p>';
+      try{ renderDashboard(await fetchUserData(code)); }
+      catch(e){ document.getElementById("root").innerHTML = `<p class="error">Erro: ${e.message}</p>`; }
+    })();
   </script>
 </body>
 </html>
