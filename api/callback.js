@@ -1,92 +1,56 @@
-let botGuildsDatabase = new Set();
+// api/callback.js
+const fetch = require('node-fetch');
 
-// Carrega os IDs dos servidores onde o bot está
-async function loadBotGuilds() {
-  try {
-    const res = await fetch('https://fps.ms/api/bot-guilds');
-    if (!res.ok) throw new Error('Falha ao obter bot-guilds');
-    const { ids } = await res.json();
-    botGuildsDatabase = new Set(ids);
-  } catch (e) {
-    console.error("Erro carregando botGuilds:", e);
-    botGuildsDatabase = new Set();
-  }
-}
+const CLIENT_ID = '1392176069070557365'; // Seu client_id do Discord
+const CLIENT_SECRET = 'ARWfBzUjAMjZoKIbZHjT9tUbeUk4HlZ6'; // Seu client_secret do Discord
+const REDIRECT_URI = 'https://lily-dashboard-five.vercel.app/callback.html';
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   const code = req.query.code;
-  const redirect_uri = 'https://lily-dashboard-five.vercel.app/callback.html';
-
-  if (!code) {
-    return res.status(400).json({ error: 'Código ausente' });
-  }
-
-  // Carrega IDs atualizados
-  await loadBotGuilds();
+  if (!code) return res.status(400).json({ error: 'Código OAuth2 ausente' });
 
   try {
-    // Troca code por access_token
+    // Trocar code pelo token
     const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
-        client_id: process.env.DISCORD_CLIENT_ID || '1392176069070557365',
-        client_secret: process.env.DISCORD_CLIENT_SECRET || 'ARWfBzUjAMjZoKIbZHjT9tUbeUk4HlZ6',
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
         grant_type: 'authorization_code',
         code,
-        redirect_uri
-      })
-    });
-
-    const tokenData = await tokenResponse.json();
-    if (!tokenResponse.ok) {
-      console.error('Erro no token:', tokenData);
-      return res.status(400).json({ error: 'Erro ao obter token', debug: tokenData });
-    }
-
-    // Busca dados do usuário + guilds
-    const [userResponse, guildsResponse] = await Promise.all([
-      fetch('https://discord.com/api/users/@me', {
-        headers: { Authorization: `Bearer ${tokenData.access_token}` }
+        redirect_uri: REDIRECT_URI,
       }),
-      fetch('https://discord.com/api/users/@me/guilds', {
-        headers: { Authorization: `Bearer ${tokenData.access_token}` }
-      })
-    ]);
+    });
+    const tokenData = await tokenResponse.json();
+    if (!tokenResponse.ok) return res.status(400).json({ error: 'Erro no token', details: tokenData });
 
-    if (!userResponse.ok || !guildsResponse.ok) {
-      const userError = await userResponse.json().catch(() => ({}));
-      const guildsError = await guildsResponse.json().catch(() => ({}));
-      console.error('Erros:', { userError, guildsError });
-      return res.status(400).json({ error: 'Erro ao buscar dados do Discord', debug: { userError, guildsError } });
-    }
+    const accessToken = tokenData.access_token;
+
+    // Buscar dados do usuário e guilds
+    const [userResponse, guildsResponse] = await Promise.all([
+      fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${accessToken}` } }),
+      fetch('https://discord.com/api/users/@me/guilds', { headers: { Authorization: `Bearer ${accessToken}` } }),
+    ]);
 
     const user = await userResponse.json();
     const guilds = await guildsResponse.json();
 
-    // Marca presença do bot e filtra só servidores onde o usuário é admin
-    const guildsWithBotInfo = guilds
-      .map(g => ({
-        ...g,
-        hasBot: botGuildsDatabase.has(g.id),
-        isAdmin: (g.permissions & 0x8) === 0x8 || g.owner
-      }))
-      .filter(g => g.isAdmin);
+    // Filtrar só servidores onde o user é admin (permissão 0x8)
+    const adminGuilds = guilds.filter(guild => (guild.permissions & 0x8) === 0x8);
 
     return res.status(200).json({
       user: {
         ...user,
         avatarUrl: user.avatar
           ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-          : `https://cdn.discordapp.com/embed/avatars/${user.discriminator % 5}.png`
+          : `https://cdn.discordapp.com/embed/avatars/${user.discriminator % 5}.png`,
       },
-      guilds: guildsWithBotInfo
+      guilds: adminGuilds,
+      accessToken,
     });
-  } catch (err) {
-    console.error('Erro interno:', err);
-    return res.status(500).json({
-      error: 'Erro interno no servidor',
-      debug: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
+  } catch (error) {
+    console.error('Erro interno:', error);
+    return res.status(500).json({ error: 'Erro interno no servidor' });
   }
-}
+};
