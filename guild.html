@@ -1,57 +1,20 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>Configuração</title>
-  <style>
-    body {
-      background: #111;
-      color: white;
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
-    .guild {
-      background: #1f1f1f;
-      margin: 10px 0;
-      padding: 15px;
-      border-radius: 8px;
-    }
-    img {
-      border-radius: 50%;
-      width: 48px;
-      height: 48px;
-    }
-    h1 {
-      margin-bottom: 10px;
-    }
-  </style>
-</head>
-<body>
-  <h1>Olá, <span id="username"></span>!</h1>
-  <h2>Escolha um servidor para configurar:</h2>
-  <div id="guilds"></div>
-
-  <script>
-    const data = JSON.parse(localStorage.getItem('lilyData'));
-    if (!data) {
-      document.body.innerHTML = '<p>Você não está logado.</p>';
-      throw new Error('Sem dados do usuário.');
-    }
-
-    document.getElementById('username').textContent = data.user.username;
-
-    const guildsDiv = document.getElementById('guilds');
-    data.guilds.forEach(g => {
-      const el = document.createElement('div');
-      el.className = 'guild';
-      el.innerHTML = `
-        <strong>${g.name}</strong><br>
-        ID: ${g.id}<br>
-        <button onclick="alert('Abrir painel de ${g.name}')">Configurar</button>
-      `;
-      guildsDiv.appendChild(el);
-    });
-  </script>
-</body>
-</html>
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><meta viewport="width=device-width"><title>Configurar</title>
+<style>body{background:#121212;color:#fff;font-family:sans-serif;margin:0;padding:20px}header{padding:10px;background:#1f1f1f;display:flex;gap:15px}form{background:#1f1f1f;padding:20px;border-radius:8px;max-width:400px;margin:auto}label{display:flex;justify-content:space-between;margin-bottom:15px}select,button{padding:8px;border:none;border-radius:6px}button{width:100%;background:#5865F2;color:#fff;cursor:pointer}</style>
+</head><body>
+<header><a href="feed.html">Feed</a><a href="profile.html">Perfil</a><a href="games.html">Jogos</a></header>
+<h1>Configurações do Servidor</h1>
+<form>
+  <label>Tickets: <select id="tickets"><option>on</option><option>off</option></select></label>
+  <label>Logs (entrada/saída): <select id="logs"><option>on</option><option>off</option></select></label>
+  <label>Música: <select id="music"><option>on</option><option>off</option></select></label>
+  <button type="submit">Salvar pra todos</button>
+</form>
+<script>
+const data=JSON.parse(localStorage.getItem('lilyData')||'{}');
+if(!data.user) location.href='index.html';
+document.querySelector('form').onsubmit = e=>{
+  e.preventDefault();
+  alert('Config salva globalmente!');
+};
+</script>
+</body></html>
