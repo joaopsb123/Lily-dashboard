@@ -2,21 +2,18 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Feed – Lily Social</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
     body{background:#18191c;color:#e4e6eb}
     nav{background:#202225;padding:10px 20px;display:flex;align-items:center}
     nav a{color:#b9bbbe;margin-right:20px;text-decoration:none;font-weight:500}
-    nav a.active,nav a:hover{color:#fff}
+    nav a.active,nav a:hover{color:white}
     nav .spacer{flex:1}
     nav button{background:#5865f2;border:none;padding:6px 12px;border-radius:4px;color:white;cursor:pointer}
     .container{max-width:600px;margin:20px auto;padding:0 10px}
-    .stories{display:flex;overflow-x:auto;margin-bottom:20px}
-    .stories img{width:60px;height:60px;border-radius:50%;margin-right:10px;border:2px solid #5865f2;cursor:pointer}
     .new-post{background:#242526;padding:15px;border-radius:8px;margin-bottom:20px}
-    .new-post textarea{width:100%;height:80px;padding:8px;border-radius:6px;border:1px solid #3a3c40;background:#3a3c40;color:#e4e6eb}
+    .new-post textarea{width:100%;height:80px;padding:8px;border-radius:6px;border:none;background:#3a3c40;color:#e4e6eb}
     .new-post input{margin-top:10px;color:#b9bbbe}
     .new-post button{margin-top:10px;background:#5865f2;border:none;padding:8px 16px;border-radius:6px;color:white;cursor:pointer}
     .post{background:#242526;padding:15px;border-radius:8px;margin-bottom:20px}
@@ -27,11 +24,14 @@
     .actions{margin-top:10px}
     .actions button{background:#7289da;border:none;padding:6px 10px;border-radius:4px;color:white;cursor:pointer;margin-right:8px}
     .comments{margin-top:10px}
-    .comments input{width:70%;padding:6px;border-radius:4px;border:1px solid #3a3c40;background:#3a3c40;color:#e4e6eb}
+    .comments input{width:70%;padding:6px;border-radius:4px;border:none;background:#3a3c40;color:#e4e6eb}
     .comments button{background:#7289da;border:none;padding:6px 10px;border-radius:4px;color:white;cursor:pointer;margin-left:6px}
+    .stories{display:flex;overflow-x:auto;margin-bottom:20px}
+    .stories img{width:60px;height:60px;border-radius:50%;margin-right:10px;border:2px solid #5865f2;cursor:pointer}
   </style>
 </head>
 <body>
+
   <nav>
     <a href="feed.html" class="active">Feed</a>
     <a href="profile.html">Perfil</a>
@@ -58,75 +58,60 @@
     if(!data.user) logout();
     function logout(){ localStorage.clear(); location.href='index.html'; }
 
-    async function loadFeed(){
-      const posts = await fetch('/api/posts.js?user='+encodeURIComponent(JSON.stringify(data.user)))
-        .then(r=>r.json());
-      document.getElementById('feed').innerHTML = posts.map(p=>`
+    // Keys únicas
+    const postsKey = `posts_${data.user.id}`;
+    const storiesKey = `stories_${data.user.id}`;
+
+    // Carrega e renderiza posts
+    function loadFeed(){
+      const posts = JSON.parse(localStorage.getItem(postsKey)||'[]');
+      document.getElementById('feed').innerHTML = posts.map((p,idx) => `
         <div class="post">
           <div class="post-header">
-            <img src="${p.avatar}" alt="avatar"/>
-            <strong>${p.author}</strong>
+            <img src="${data.user.avatarUrl}" alt="avatar"/>
+            <strong>${data.user.username}#${data.user.discriminator}</strong>
           </div>
           <div class="post-content">
             <p>${p.content}</p>
             ${p.image?`<img src="${p.image}"/>`:''}
           </div>
-          <div class="actions">
-            <button onclick="like(${p.id})">❤️ ${p.likes.length}</button>
-            <button onclick="toggleComments(${p.id})">💬 ${p.comments.length}</button>
-          </div>
-          <div class="comments" id="cmt${p.id}" style="display:none;">
-            ${p.comments.map(c=>`<p><strong>${c.user}:</strong> ${c.text}</p>`).join('')}
-            <input id="in${p.id}" placeholder="Comentar..."/><button onclick="comment(${p.id})">Enviar</button>
-          </div>
         </div>
       `).join('');
     }
 
+    // Novo post
     function newPost(){
       const txt = document.getElementById('txt').value;
       const file = document.getElementById('img').files[0];
+      if(!txt.trim() && !file) return alert('Escreva ou selecione uma imagem');
       if(file){
         const fr = new FileReader();
-        fr.onload = ()=>apiCreate(txt, fr.result);
+        fr.onload = ()=>{
+          savePost(txt, fr.result);
+        };
         fr.readAsDataURL(file);
-      } else apiCreate(txt,null);
+      } else savePost(txt,null);
     }
-    function apiCreate(content,image){
-      fetch('/api/posts.js?user='+encodeURIComponent(JSON.stringify(data.user)),{
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({action:'create',content,image})
-      }).then(()=>{ document.getElementById('txt').value=''; document.getElementById('img').value=''; loadFeed(); });
-    }
-    function like(id){
-      fetch('/api/posts.js?user='+encodeURIComponent(JSON.stringify(data.user)),{
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({action:'like',id})
-      }).then(loadFeed);
-    }
-    function toggleComments(id){
-      const el = document.getElementById('cmt'+id);
-      el.style.display = el.style.display==='none'?'block':'none';
-    }
-    function comment(id){
-      const txt = document.getElementById('in'+id).value;
-      if(!txt.trim()) return alert('Comentário vazio');
-      fetch('/api/posts.js?user='+encodeURIComponent(JSON.stringify(data.user)),{
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({action:'comment',id,text:txt})
-      }).then(loadFeed);
+    function savePost(content,image){
+      const arr = JSON.parse(localStorage.getItem(postsKey)||'[]');
+      arr.unshift({content,image, ts: Date.now()});
+      localStorage.setItem(postsKey, JSON.stringify(arr));
+      document.getElementById('txt').value='';
+      document.getElementById('img').value='';
+      loadFeed();
     }
 
-    // stories
-    fetch('/api/stories.js?user='+encodeURIComponent(JSON.stringify(data.user)))
-      .then(r=>r.json())
-      .then(sts=>{
-        document.getElementById('stories').innerHTML = sts.map(s=>
-          `<img src="${s.image}" title="${s.user}" onclick="alert('Story de ${s.user}')">`
-        ).join('');
-    });
+    // Stories (não removem—apenas demo)
+    function loadStories(){
+      const sts = JSON.parse(localStorage.getItem(storiesKey)||'[]');
+      document.getElementById('stories').innerHTML = sts.map((s,idx)=>`
+        <img src="${s}" onclick="alert('Story #${idx+1}')"/>
+      `).join('');
+    }
 
+    // Iniciar
     loadFeed();
+    loadStories();
   </script>
 </body>
 </html>
