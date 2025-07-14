@@ -1,104 +1,59 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <title>Configurar Servidor</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #4a148c;
-      color: white;
-      padding: 20px;
-    }
-    h1 {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-top: 15px;
-    }
-    input, select {
-      margin-top: 5px;
-      padding: 8px;
-      width: 300px;
-      border-radius: 5px;
-      border: none;
-      font-size: 1rem;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #6a1b9a;
-      border: none;
-      color: white;
-      font-size: 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Dashboard do Servidor</title>
+<style>
+  body{margin:0;padding:20px;font-family:sans-serif;background:#121212;color:#fff;}
+  h1{text-align:center;}
+  .profile{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+  .profile img{width:60px;height:60px;border-radius:50%;}
+  .guild{background:#1E1E1E;padding:15px;border-radius:8px;margin-bottom:10px;cursor:pointer;}
+  form{background:#1E1E1E;padding:20px;border-radius:8px;max-width:400px;margin:auto;}
+  label{display:flex;justify-content:space-between;margin-bottom:15px;}
+  select,button{padding:8px;border:none;border-radius:6px;}
+  button{width:100%;background:#6A1B9A;color:#fff;cursor:pointer;}
+</style>
 </head>
 <body>
-  <h1 id="guildName">Configuração do Servidor</h1>
-
-  <form id="configForm">
-    <label>
-      Sistema de Tickets:
-      <select name="tickets" id="tickets">
-        <option value="enabled">Ativado</option>
-        <option value="disabled">Desativado</option>
-      </select>
-    </label>
-
-    <label>
-      Logs de Entrada/Saída:
-      <select name="logs" id="logs">
-        <option value="enabled">Ativado</option>
-        <option value="disabled">Desativado</option>
-      </select>
-    </label>
-
-    <label>
-      Sistema de Música:
-      <select name="music" id="music">
-        <option value="enabled">Ativado</option>
-        <option value="disabled">Desativado</option>
-      </select>
-    </label>
-
-    <button type="submit">Salvar Configurações</button>
-  </form>
-
+  <div id="main"></div>
 <script>
-  // Pega dados do servidor da query string
-  const params = new URLSearchParams(window.location.search);
-  const guildName = params.get('name');
-  const guildId = params.get('id');
+  const data = JSON.parse(localStorage.getItem('lilyData') || '{}');
+  const main = document.getElementById('main');
+  if(!data.user){ main.innerHTML='<p>Você não está logado. <a href="/">Login</a></p>'; throw ''; }
 
-  if (!guildName || !guildId) {
-    alert('Servidor não especificado.');
-    window.location.href = '/';
-  }
+  main.innerHTML = `
+    <div class="profile">
+      <img src="${data.user.avatarUrl}" alt="Avatar"/>
+      <div><h1>${data.user.username}#${data.user.discriminator}</h1></div>
+    </div>
+    <h2>Servidores administrados</h2>
+    <div id="list"></div>
+    <h2>Configurações gerais</h2>
+    <form id="form">
+      <label>Tickets: <select id="tickets"><option value="on">On</option><option value="off">Off</option></select></label>
+      <label>Logs (entrada/saída): <select id="logs"><option value="on">On</option><option value="off">Off</option></select></label>
+      <label>Música: <select id="music"><option value="on">On</option><option value="off">Off</option></select></label>
+      <button type="submit">Salvar configurações</button>
+    </form>
+  `;
 
-  document.getElementById('guildName').textContent = `Configuração do Servidor: ${guildName}`;
+  const list = document.getElementById('list');
+  data.guilds.forEach(g => {
+    const div = document.createElement('div');
+    div.className = 'guild';
+    div.textContent = g.name;
+    list.appendChild(div);
+  });
 
-  const form = document.getElementById('configForm');
-
-  form.onsubmit = (e) => {
+  const form = document.getElementById('form');
+  form.addEventListener('submit', e => {
     e.preventDefault();
-
-    // Aqui você salvaria as configs num banco ou API, agora só console.log
-    const config = {
-      guildId,
-      tickets: form.tickets.value,
-      logs: form.logs.value,
-      music: form.music.value,
+    const cfg = {
+      tickets: document.getElementById('tickets').value,
+      logs: document.getElementById('logs').value,
+      music: document.getElementById('music').value
     };
-
-    alert('Configurações salvas (simulação): ' + JSON.stringify(config));
-
-    // Pode redirecionar ou atualizar
-    // window.location.href = '/';
-  };
+    alert('Configurações salvas:\n' + JSON.stringify(cfg,null,2));
+  });
 </script>
 </body>
 </html>
