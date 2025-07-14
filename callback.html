@@ -1,45 +1,94 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="scroll-smooth">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Lily Dashboard - Callback</title>
+<title>Lily Dashboard - Painel</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background: #141414;
-    color: white;
-    padding: 30px;
-  }
-  .avatar {
-    border-radius: 50%;
-    width: 96px;
-    height: 96px;
-  }
-  h1, h2 {
-    margin-top: 0;
-  }
-  .guild {
-    background: #222;
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 8px;
+    background: #0f172a; /* azul escuro */
   }
 </style>
 </head>
-<body>
-<h1>Bem vindo, <span id="username"></span>!</h1>
-<img id="avatar" class="avatar" alt="Avatar do usuário" />
-<h2>Seus Servidores (onde é admin):</h2>
-<div id="guilds"></div>
+<body class="min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white font-sans px-4">
+
+<header class="flex justify-between items-center py-6 max-w-6xl mx-auto w-full">
+  <h1 class="text-4xl font-extrabold drop-shadow-lg select-none">Lily Dashboard</h1>
+  <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md text-white font-semibold transition">Logout</button>
+</header>
+
+<main class="flex-grow max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-8 my-8">
+
+  <!-- Perfil Usuário -->
+  <section class="bg-indigo-800 rounded-xl p-6 shadow-lg flex flex-col items-center text-center">
+    <img id="userAvatar" class="rounded-full w-28 h-28 mb-4 ring-4 ring-indigo-400" alt="Avatar do usuário" />
+    <h2 id="userName" class="text-2xl font-semibold"></h2>
+    <p id="userTag" class="text-indigo-200 mt-1"></p>
+  </section>
+
+  <!-- Servidores -->
+  <section class="bg-indigo-800 rounded-xl p-6 shadow-lg overflow-y-auto max-h-[480px]">
+    <h3 class="text-xl font-bold mb-4">Seus Servidores (Admin)</h3>
+    <div id="guildList" class="space-y-3 overflow-auto max-h-[400px] pr-2"></div>
+  </section>
+
+  <!-- Configurações -->
+  <section class="bg-indigo-800 rounded-xl p-6 shadow-lg flex flex-col">
+    <h3 class="text-xl font-bold mb-4">Configurações</h3>
+
+    <form id="configForm" class="space-y-4 flex-grow overflow-y-auto">
+
+      <!-- Entrada/Saída -->
+      <fieldset>
+        <legend class="text-lg font-semibold mb-2">Sistema de Entradas/Saídas</legend>
+        <textarea id="entradaSaida" rows="4" class="w-full rounded-md p-2 text-indigo-900"></textarea>
+        <p class="text-xs mt-1 text-indigo-300">Configuração JSON ou texto livre</p>
+      </fieldset>
+
+      <!-- Tickets -->
+      <fieldset>
+        <legend class="text-lg font-semibold mb-2">Sistema de Tickets</legend>
+        <textarea id="tickets" rows="4" class="w-full rounded-md p-2 text-indigo-900"></textarea>
+        <p class="text-xs mt-1 text-indigo-300">Configuração JSON ou texto livre</p>
+      </fieldset>
+
+      <!-- Música -->
+      <fieldset>
+        <legend class="text-lg font-semibold mb-2">Sistema de Música</legend>
+        <textarea id="musica" rows="4" class="w-full rounded-md p-2 text-indigo-900"></textarea>
+        <p class="text-xs mt-1 text-indigo-300">Configuração JSON ou texto livre</p>
+      </fieldset>
+
+      <button type="submit" class="mt-auto bg-indigo-600 hover:bg-indigo-700 rounded-md px-4 py-2 font-semibold transition w-full">
+        Salvar Configurações
+      </button>
+    </form>
+  </section>
+
+</main>
 
 <script>
-  // Pega o token do hash da URL
-  function getAccessTokenFromHash() {
+  // Função para pegar o token do hash
+  function getAccessToken() {
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
     return params.get('access_token');
   }
+
+  // Pega elementos do DOM
+  const userNameEl = document.getElementById('userName');
+  const userTagEl = document.getElementById('userTag');
+  const userAvatarEl = document.getElementById('userAvatar');
+  const guildListEl = document.getElementById('guildList');
+  const configForm = document.getElementById('configForm');
+  const entradaSaidaEl = document.getElementById('entradaSaida');
+  const ticketsEl = document.getElementById('tickets');
+  const musicaEl = document.getElementById('musica');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  // Armazenamento local das configs
+  const STORAGE_KEY = 'lily_dashboard_config';
 
   async function fetchDiscordApi(endpoint, token) {
     const res = await fetch(`https://discord.com/api/v10/${endpoint}`, {
@@ -49,43 +98,71 @@
     return res.json();
   }
 
+  function renderGuild(guild) {
+    const div = document.createElement('div');
+    div.className = 'flex items-center space-x-3 bg-indigo-700 rounded-md p-3 shadow-sm';
+    const icon = guild.icon
+      ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
+      : `https://cdn.discordapp.com/embed/avatars/${guild.id % 5}.png`;
+    div.innerHTML = `
+      <img src="${icon}" alt="Ícone do servidor" class="w-10 h-10 rounded-full" />
+      <div>
+        <h4 class="font-semibold">${guild.name}</h4>
+        <p class="text-indigo-300 text-sm">ID: ${guild.id}</p>
+      </div>
+    `;
+    return div;
+  }
+
+  function loadConfig() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return {};
+      return JSON.parse(raw);
+    } catch {
+      return {};
+    }
+  }
+
+  function saveConfig(config) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+  }
+
   async function main() {
-    const token = getAccessTokenFromHash();
+    const token = getAccessToken();
     if (!token) {
-      document.body.innerHTML = '<h1>Erro: Token de acesso não encontrado.</h1>';
+      document.body.innerHTML = '<h1 class="text-red-500 text-center mt-20 text-xl">Token de acesso não encontrado.<br />Volte para a página inicial e faça login.</h1>';
       return;
     }
 
     try {
-      const user = await fetchDiscordApi('users/@me', token);
-      const guilds = await fetchDiscordApi('users/@me/guilds', token);
+      // Buscar user + guilds
+      const [user, guilds] = await Promise.all([
+        fetchDiscordApi('users/@me', token),
+        fetchDiscordApi('users/@me/guilds', token),
+      ]);
 
-      // Filtra guildas onde usuário é admin (perm 0x8 = admin)
-      const adminGuilds = guilds.filter(g => (g.permissions & 0x8) === 0x8);
-
-      document.getElementById('username').textContent = `${user.username}#${user.discriminator}`;
-      const avatarUrl = user.avatar
+      userNameEl.textContent = `${user.username}`;
+      userTagEl.textContent = `#${user.discriminator}`;
+      userAvatarEl.src = user.avatar
         ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
         : `https://cdn.discordapp.com/embed/avatars/${user.discriminator % 5}.png`;
-      document.getElementById('avatar').src = avatarUrl;
 
-      const guildsDiv = document.getElementById('guilds');
+      // Mostrar apenas guildas onde user é admin
+      const adminGuilds = guilds.filter(g => (g.permissions & 0x8) === 0x8);
+      guildListEl.innerHTML = '';
       if (adminGuilds.length === 0) {
-        guildsDiv.textContent = 'Você não é admin em nenhum servidor.';
+        guildListEl.textContent = 'Você não é admin em nenhum servidor.';
       } else {
-        adminGuilds.forEach(g => {
-          const div = document.createElement('div');
-          div.className = 'guild';
-          div.textContent = g.name;
-          guildsDiv.appendChild(div);
-        });
+        adminGuilds.forEach(g => guildListEl.appendChild(renderGuild(g)));
       }
-    } catch (err) {
-      document.body.innerHTML = `<h1>Erro ao obter dados: ${err.message}</h1>`;
-    }
-  }
 
-  main();
-</script>
-</body>
-</html>
+      // Carregar configs do localStorage
+      const config = loadConfig();
+      entradaSaidaEl.value = config.entradaSaida || '';
+      ticketsEl.value = config.tickets || '';
+      musicaEl.value = config.musica || '';
+
+      // Salvar configs no submit
+      configForm.addEventListener('submit', e => {
+        e.prevent
