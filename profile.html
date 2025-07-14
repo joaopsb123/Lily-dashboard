@@ -5,19 +5,20 @@
   <title>Perfil – Lily Social</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
-    body{background:#2f3136;color:#dcddde}
+    body{background:#18191c;color:#e4e6eb}
     nav{background:#202225;padding:10px 20px;display:flex;align-items:center}
-    nav a{color:#b9bbbe;margin-right:20px;text-decoration:none}
-    nav a.active,nav a:hover{color:white}
+    nav a{color:#b9bbbe;margin-right:20px;text-decoration:none;font-weight:500}
+    nav a.active,nav a:hover{color:#fff}
     nav .spacer{flex:1}
-    nav button{background:#5865F2;border:none;padding:6px 12px;border-radius:4px;color:white;cursor:pointer}
-    .container{max-width:600px;margin:20px auto;background:#36393f;padding:20px;border-radius:8px}
-    .profile-header{text-align:center;margin-bottom:20px}
-    .profile-header img{border-radius:50%;width:100px;height:100px}
-    .profile-header h2{margin-top:10px}
-    .bio{background:#2f3136;padding:15px;border-radius:6px;min-height:80px}
-    .bio input{width:100%;background:#202225;color:white;padding:8px;border:none;border-radius:4px}
-    .bio button{margin-top:10px;background:#5865F2;border:none;color:white;padding:8px 14px;border-radius:4px;cursor:pointer}
+    nav button{background:#5865f2;border:none;padding:6px 12px;border-radius:4px;color:white;cursor:pointer}
+    .container{max-width:600px;margin:20px auto;background:#242526;padding:20px;border-radius:8px}
+    .header{text-align:center;margin-bottom:20px}
+    .header img{border-radius:50%;width:100px;height:100px}
+    .header h2{margin-top:10px}
+    .bio-box{background:#3a3c40;padding:15px;border-radius:6px}
+    .bio-box p{margin-bottom:10px}
+    .bio-box textarea{width:100%;height:80px;padding:8px;border-radius:4px;border:1px solid #202225;background:#2f3136;color:#e4e6eb}
+    .bio-box button{margin-top:10px;background:#5865f2;border:none;padding:8px 16px;border-radius:4px;color:white;cursor:pointer}
   </style>
 </head>
 <body>
@@ -31,20 +32,20 @@
   </nav>
 
   <div class="container">
-    <div class="profile-header">
-      <img id="ava"/>
+    <div class="header">
+      <img id="ava" alt="avatar"/>
       <h2 id="name"></h2>
     </div>
-    <div class="bio">
-      <div id="bioText"></div>
-      <input id="bioIn" placeholder="Edite sua bio..."/>
-      <button onclick="saveBio()">Salvar</button>
+    <div class="bio-box">
+      <p id="bio"></p>
+      <textarea id="bioIn" placeholder="Edite sua bio..."></textarea>
+      <button onclick="saveBio()">Salvar Bio</button>
     </div>
   </div>
 
   <script>
     const data = JSON.parse(localStorage.getItem('lilyData')||'{}');
-    if(!data.user) return logout();
+    if(!data.user) logout();
     function logout(){ localStorage.clear(); location.href='index.html'; }
 
     document.getElementById('ava').src = data.user.avatarUrl;
@@ -53,7 +54,7 @@
     function loadBio(){
       fetch('/api/users.js?user='+encodeURIComponent(JSON.stringify(data.user)))
         .then(r=>r.json()).then(u=>{
-          document.getElementById('bioText').textContent = u.bio||'Sem bio ainda.';
+          document.getElementById('bio').textContent = u.bio||'Sem bio adicionada.';
           document.getElementById('bioIn').value = u.bio||'';
         });
     }
