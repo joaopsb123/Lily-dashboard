@@ -1,168 +1,24 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Lily Dashboard - Painel</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  body {
-    background: #0f172a; /* azul escuro */
-  }
-</style>
-</head>
-<body class="min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white font-sans px-4">
-
-<header class="flex justify-between items-center py-6 max-w-6xl mx-auto w-full">
-  <h1 class="text-4xl font-extrabold drop-shadow-lg select-none">Lily Dashboard</h1>
-  <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md text-white font-semibold transition">Logout</button>
-</header>
-
-<main class="flex-grow max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-8 my-8">
-
-  <!-- Perfil Usuário -->
-  <section class="bg-indigo-800 rounded-xl p-6 shadow-lg flex flex-col items-center text-center">
-    <img id="userAvatar" class="rounded-full w-28 h-28 mb-4 ring-4 ring-indigo-400" alt="Avatar do usuário" />
-    <h2 id="userName" class="text-2xl font-semibold"></h2>
-    <p id="userTag" class="text-indigo-200 mt-1"></p>
-  </section>
-
-  <!-- Servidores -->
-  <section class="bg-indigo-800 rounded-xl p-6 shadow-lg overflow-y-auto max-h-[480px]">
-    <h3 class="text-xl font-bold mb-4">Seus Servidores (Admin)</h3>
-    <div id="guildList" class="space-y-3 overflow-auto max-h-[400px] pr-2"></div>
-  </section>
-
-  <!-- Configurações -->
-  <section class="bg-indigo-800 rounded-xl p-6 shadow-lg flex flex-col">
-    <h3 class="text-xl font-bold mb-4">Configurações</h3>
-
-    <form id="configForm" class="space-y-4 flex-grow overflow-y-auto">
-
-      <!-- Entrada/Saída -->
-      <fieldset>
-        <legend class="text-lg font-semibold mb-2">Sistema de Entradas/Saídas</legend>
-        <textarea id="entradaSaida" rows="4" class="w-full rounded-md p-2 text-indigo-900"></textarea>
-        <p class="text-xs mt-1 text-indigo-300">Configuração JSON ou texto livre</p>
-      </fieldset>
-
-      <!-- Tickets -->
-      <fieldset>
-        <legend class="text-lg font-semibold mb-2">Sistema de Tickets</legend>
-        <textarea id="tickets" rows="4" class="w-full rounded-md p-2 text-indigo-900"></textarea>
-        <p class="text-xs mt-1 text-indigo-300">Configuração JSON ou texto livre</p>
-      </fieldset>
-
-      <!-- Música -->
-      <fieldset>
-        <legend class="text-lg font-semibold mb-2">Sistema de Música</legend>
-        <textarea id="musica" rows="4" class="w-full rounded-md p-2 text-indigo-900"></textarea>
-        <p class="text-xs mt-1 text-indigo-300">Configuração JSON ou texto livre</p>
-      </fieldset>
-
-      <button type="submit" class="mt-auto bg-indigo-600 hover:bg-indigo-700 rounded-md px-4 py-2 font-semibold transition w-full">
-        Salvar Configurações
-      </button>
-    </form>
-  </section>
-
-</main>
-
+<html lang="pt-BR">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Processando...</title></head>
+<body style="font-family:sans-serif;background:#121212;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;text-align:center;">
+  <div id="msg">Processando login...</div>
 <script>
-  // Função para pegar o token do hash
-  function getAccessToken() {
-    const hash = window.location.hash.substring(1);
-    const params = new URLSearchParams(hash);
-    return params.get('access_token');
-  }
-
-  // Pega elementos do DOM
-  const userNameEl = document.getElementById('userName');
-  const userTagEl = document.getElementById('userTag');
-  const userAvatarEl = document.getElementById('userAvatar');
-  const guildListEl = document.getElementById('guildList');
-  const configForm = document.getElementById('configForm');
-  const entradaSaidaEl = document.getElementById('entradaSaida');
-  const ticketsEl = document.getElementById('tickets');
-  const musicaEl = document.getElementById('musica');
-  const logoutBtn = document.getElementById('logoutBtn');
-
-  // Armazenamento local das configs
-  const STORAGE_KEY = 'lily_dashboard_config';
-
-  async function fetchDiscordApi(endpoint, token) {
-    const res = await fetch(`https://discord.com/api/v10/${endpoint}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    if (!res.ok) throw new Error(`Erro ${res.status} ao acessar ${endpoint}`);
-    return res.json();
-  }
-
-  function renderGuild(guild) {
-    const div = document.createElement('div');
-    div.className = 'flex items-center space-x-3 bg-indigo-700 rounded-md p-3 shadow-sm';
-    const icon = guild.icon
-      ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
-      : `https://cdn.discordapp.com/embed/avatars/${guild.id % 5}.png`;
-    div.innerHTML = `
-      <img src="${icon}" alt="Ícone do servidor" class="w-10 h-10 rounded-full" />
-      <div>
-        <h4 class="font-semibold">${guild.name}</h4>
-        <p class="text-indigo-300 text-sm">ID: ${guild.id}</p>
-      </div>
-    `;
-    return div;
-  }
-
-  function loadConfig() {
+  (async ()=>{
+    const params = new URLSearchParams(location.search);
+    const code = params.get('code');
+    if (!code) return document.getElementById('msg').textContent = 'Erro: código não encontrado';
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return {};
-      return JSON.parse(raw);
-    } catch {
-      return {};
+      const res = await fetch(`/api/callback?code=${code}`);
+      if(!res.ok) throw await res.json();
+      const data = await res.json();
+      localStorage.setItem('lilyData', JSON.stringify(data));
+      location.href = '/guild.html';
+    } catch (err) {
+      console.error(err);
+      document.getElementById('msg').textContent = 'Falha ao obter dados. Tente novamente.';
     }
-  }
-
-  function saveConfig(config) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
-  }
-
-  async function main() {
-    const token = getAccessToken();
-    if (!token) {
-      document.body.innerHTML = '<h1 class="text-red-500 text-center mt-20 text-xl">Token de acesso não encontrado.<br />Volte para a página inicial e faça login.</h1>';
-      return;
-    }
-
-    try {
-      // Buscar user + guilds
-      const [user, guilds] = await Promise.all([
-        fetchDiscordApi('users/@me', token),
-        fetchDiscordApi('users/@me/guilds', token),
-      ]);
-
-      userNameEl.textContent = `${user.username}`;
-      userTagEl.textContent = `#${user.discriminator}`;
-      userAvatarEl.src = user.avatar
-        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-        : `https://cdn.discordapp.com/embed/avatars/${user.discriminator % 5}.png`;
-
-      // Mostrar apenas guildas onde user é admin
-      const adminGuilds = guilds.filter(g => (g.permissions & 0x8) === 0x8);
-      guildListEl.innerHTML = '';
-      if (adminGuilds.length === 0) {
-        guildListEl.textContent = 'Você não é admin em nenhum servidor.';
-      } else {
-        adminGuilds.forEach(g => guildListEl.appendChild(renderGuild(g)));
-      }
-
-      // Carregar configs do localStorage
-      const config = loadConfig();
-      entradaSaidaEl.value = config.entradaSaida || '';
-      ticketsEl.value = config.tickets || '';
-      musicaEl.value = config.musica || '';
-
-      // Salvar configs no submit
-      configForm.addEventListener('submit', e => {
-        e.prevent
+  })();
+</script>
+</body>
+</html>
