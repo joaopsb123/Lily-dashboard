@@ -1,20 +1,21 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><meta viewport="width=device-width"><title>Conectando...</title></head><body style="display:flex;align-items:center;justify-content:center;height:100vh;background:#111;color:#fff">
-<h2 id="msg">Conectando...</h2>
-<script>
-(async()=>{
-  const params = new URLSearchParams(location.search);
-  const code = params.get('code');
-  if(!code){ msg.textContent='Código ausente'; return; }
-  try {
-    const res = await fetch(`/api/callback?code=${code}`);
-    if(!res.ok) throw new Error(await res.text());
-    const data = await res.json();
-    localStorage.setItem('lilyData', JSON.stringify(data));
-    location.href = 'feed.html';
-  } catch(e){
-    console.error(e);
-    msg.textContent='Erro: '+e.message;
-  }
-})();
-</script>
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width"><title>Conectando...</title></head>
+<body style="display:flex;justify-content:center;align-items:center;height:100vh;background:#111;color:white">
+  <h2 id="msg">Conectando...</h2>
+  <script>
+    (async () => {
+      const params = new URLSearchParams(location.search);
+      const code = params.get('code');
+      if (!code) { document.getElementById('msg').textContent = 'Código ausente'; return; }
+      try {
+        const res = await fetch(`/api/callback?code=${code}`);
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        localStorage.setItem('lilyData', JSON.stringify(data));
+        location.href = 'feed.html';
+      } catch (e) {
+        console.error(e);
+        document.getElementById('msg').textContent = 'Erro ao conectar: ' + e.message;
+      }
+    })();
+  </script>
 </body></html>
