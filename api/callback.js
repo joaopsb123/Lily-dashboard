@@ -31,7 +31,7 @@ export default async function handler(req, res) {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         client_id: process.env.DISCORD_CLIENT_ID || '1392176069070557365',
-        client_secret: process.env.DISCORD_CLIENT_SECRET || '0DNQT5RRwFYPtJ2rk1bQqqElmsIoHdM6',
+        client_secret: process.env.DISCORD_CLIENT_SECRET || 'ARWfBzUjAMjZoKIbZHjT9tUbeUk4HlZ6',
         grant_type: 'authorization_code',
         code,
         redirect_uri
