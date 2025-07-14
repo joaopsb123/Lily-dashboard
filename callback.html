@@ -1,11 +1,29 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width"><title>Conectando...</title></head>
-<body style="display:flex;justify-content:center;align-items:center;height:100vh;background:#111;color:white">
-  <h2 id="msg">Conectando...</h2>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Conectando...</title>
+  <style>
+    body { 
+      margin:0; padding:0; 
+      display:flex; align-items:center; justify-content:center;
+      height:100vh; background:#18191c; color:#e4e6eb;
+      font-family:'Segoe UI', sans-serif; text-align:center;
+    }
+    #msg { font-size:1.2rem; }
+  </style>
+</head>
+<body>
+  <div id="msg">Conectando ao Discord...</div>
   <script>
     (async () => {
       const params = new URLSearchParams(location.search);
       const code = params.get('code');
-      if (!code) { document.getElementById('msg').textContent = 'Código ausente'; return; }
+      if (!code) {
+        msg.textContent = 'Erro: código OAuth2 ausente.';
+        return;
+      }
       try {
         const res = await fetch(`/api/callback?code=${code}`);
         if (!res.ok) throw new Error(await res.text());
@@ -14,8 +32,9 @@
         location.href = 'feed.html';
       } catch (e) {
         console.error(e);
-        document.getElementById('msg').textContent = 'Erro ao conectar: ' + e.message;
+        msg.textContent = 'Erro ao obter dados: ' + e.message;
       }
     })();
   </script>
-</body></html>
+</body>
+</html>
