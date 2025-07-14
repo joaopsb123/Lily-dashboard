@@ -1,58 +1,190 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
 <title>Feed</title>
-<style>/* Simplificado */</style></head><body>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 700px;
+    margin: 20px auto;
+    background: #f9f9f9;
+    padding: 10px;
+  }
+  button {
+    background-color: #5865f2;
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    margin: 5px 0;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #4752c4;
+  }
+  textarea {
+    width: 100%;
+    height: 80px;
+    resize: vertical;
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  #feed > div {
+    background: white;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+  }
+  #feed img {
+    max-width: 100%;
+    border-radius: 6px;
+    margin-top: 5px;
+  }
+  .post-header {
+    display: flex;
+    align-items: center;
+  }
+  .post-header img {
+    border-radius: 50%;
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+  }
+  .comments, .likes {
+    margin-top: 10px;
+  }
+  .comment-input {
+    width: 80%;
+    padding: 6px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  .comment-btn {
+    padding: 6px 10px;
+    margin-left: 6px;
+    border-radius: 5px;
+    background-color: #7289da;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+  .comment-btn:hover {
+    background-color: #5a6fb8;
+  }
+  #stories {
+    display: flex;
+    overflow-x: auto;
+    margin-bottom: 20px;
+  }
+  #stories img {
+    border-radius: 50%;
+    margin-right: 10px;
+    cursor: pointer;
+    width: 60px;
+    height: 60px;
+    border: 2px solid #5865f2;
+  }
+</style>
+</head>
+<body>
+
 <button onclick="window.location='search.html'">Buscar Usuário</button>
-<h2>Stories</h2><div id="stories"></div>
+
+<h2>Stories</h2>
+<div id="stories"></div>
+
 <h2>Novo Post</h2>
-<textarea id="txt"></textarea><br/>
-<input type="file" id="img" accept="image/*"><br/>
+<textarea id="txt" placeholder="Escreva algo..."></textarea><br/>
+<input type="file" id="img" accept="image/*" /><br/>
 <button onclick="newPost()">Postar</button>
+
+<h2>Feed</h2>
 <div id="feed"></div>
+
 <script>
-const data = JSON.parse(localStorage.getItem('lilyData')||'{}');
+const data = JSON.parse(localStorage.getItem('lilyData') || '{}');
+
 function api(action, body) {
   return fetch(`/api/posts.js?user=${encodeURIComponent(JSON.stringify(data.user))}`, {
-    method: 'POST', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({action,...body})
-  }).then(r=>r.json());
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({action, ...body})
+  }).then(r => r.json());
 }
 
-function loadFeed(){
+function loadFeed() {
   fetch('/api/posts.js')
-    .then(r=>r.json())
-    .then(ps=>{document.getElementById('feed').innerHTML = ps.map(p=>`
-      <div style="border:1px solid #ccc;padding:10px">
-        <img src="${p.avatar}" width="30"> <b>${p.author}</b>
-        <p>${p.content}</p>
-        ${p.image ? `<img src="${p.image}" width="100">` : ''}
-        <p>❤️${p.likes.length} 💬${p.comments.length}</p>
-        <button onclick="like(${p.id})">Curtir</button>
-        <input id="c${p.id}" placeholder="Comentário"><button onclick="comment(${p.id})">Comentar</button>
-      </div>`).join('');});
+    .then(r => r.json())
+    .then(posts => {
+      const feed = document.getElementById('feed');
+      feed.innerHTML = posts.map(p => `
+        <div>
+          <div class="post-header">
+            <img src="${p.avatar}" alt="avatar"/>
+            <strong>${p.author}</strong>
+          </div>
+          <p>${p.content}</p>
+          ${p.image ? `<img src="${p.image}" alt="post image"/>` : ''}
+          <div class="likes">❤️ ${p.likes.length} Likes</div>
+          <button onclick="like(${p.id})">Curtir</button>
+          <div class="comments">
+            ${p.comments.map(c => `<p><strong>${c.user}:</strong> ${c.text}</p>`).join('')}
+            <input class="comment-input" id="c${p.id}" placeholder="Comentar..."/>
+            <button class="comment-btn" onclick="comment(${p.id})">Enviar</button>
+          </div>
+        </div>
+      `).join('');
+    });
 }
-function newPost(){
+
+function newPost() {
   const txt = document.getElementById('txt').value;
   const file = document.getElementById('img').files[0];
-  if(file){
+  if (file) {
     const reader = new FileReader();
-    reader.onload = ()=> {
-      api('create', {content:txt,image:reader.result}).then(loadFeed);
+    reader.onload = () => {
+      api('create', {content: txt, image: reader.result}).then(() => {
+        document.getElementById('txt').value = '';
+        document.getElementById('img').value = '';
+        loadFeed();
+      });
     };
     reader.readAsDataURL(file);
-  } else api('create',{content:txt}).then(loadFeed);
+  } else {
+    api('create', {content: txt}).then(() => {
+      document.getElementById('txt').value = '';
+      loadFeed();
+    });
+  }
 }
-function like(id){ api('like',{id}).then(loadFeed); }
-function comment(id){
+
+function like(id) {
+  api('like', {id}).then(loadFeed);
+}
+
+function comment(id) {
   const txt = document.getElementById('c'+id).value;
-  api('comment',{id,text:txt}).then(loadFeed);
+  if (!txt.trim()) return alert('Comentário vazio!');
+  api('comment', {id, text: txt}).then(() => {
+    document.getElementById('c'+id).value = '';
+    loadFeed();
+  });
 }
+
 loadFeed();
 
-// stories
+// Carregar stories
 fetch(`/api/stories.js?user=${encodeURIComponent(JSON.stringify(data.user))}`)
-  .then(r=>r.json()).then(sts=>{
-    document.getElementById('stories').innerHTML =
-       sts.map(s=>`<img onclick="viewStory('${s.user}')" src="${s.image}" width="60">`).join('');
+  .then(r => r.json())
+  .then(stories => {
+    const cont = document.getElementById('stories');
+    cont.innerHTML = stories.map(s => `<img src="${s.image}" title="${s.user}" onclick="alert('Ver story de ${s.user}')" />`).join('');
   });
 </script>
-</body></html>
+
+</body>
+</html>
