@@ -1,104 +1,49 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Lily Dashboard</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #9b59b6, #8e44ad);
-      color: white;
-      margin: 0; padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100vh;
-      justify-content: center;
-    }
-    button {
-      padding: 12px 20px;
-      font-size: 1.2rem;
-      background: #5e3ea1;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-    ul {
-      list-style: none;
-      padding-left: 0;
-      margin-top: 20px;
-      max-width: 400px;
-      width: 100%;
-    }
-    li {
-      background: rgba(255 255 255 / 0.1);
-      margin-bottom: 10px;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    li:hover {
-      background: rgba(255 255 255 / 0.2);
-    }
-    img.avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      margin-top: 10px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lily Dashboard - Login</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+    text-align: center;
+    padding: 50px;
+  }
+  button {
+    background: #fff;
+    color: #2575fc;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: #e0e0e0;
+  }
+</style>
 </head>
 <body>
+<h1>Lily Dashboard</h1>
+<p>Faça login com Discord para continuar</p>
 
-  <h1>Lily Dashboard</h1>
-  <div id="content">
-    <button id="login">Entrar com Discord</button>
-  </div>
+<button id="loginBtn">Login com Discord</button>
 
 <script>
   const CLIENT_ID = '1392176069070557365';
   const REDIRECT_URI = 'https://lily-dashboard-five.vercel.app/callback.html';
+  const SCOPE = 'identify guilds';
 
-  const loginBtn = document.getElementById('login');
-  const content = document.getElementById('content');
-
-  loginBtn.onclick = () => {
-    const url = `https://discord.com/oauth2/authorize?client_id=1392176069070557365&response_type=code&redirect_uri=https%3A%2F%2Flily-dashboard-five.vercel.app%2Fcallback.html&scope=identify+email+guilds`;
-    window.location.href = url;
+  document.getElementById('loginBtn').onclick = () => {
+    const discordOauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
+      REDIRECT_URI
+    )}&response_type=token&scope=${encodeURIComponent(SCOPE)}`;
+    window.location.href = discordOauthUrl;
   };
-
-  // Se já tem dados salvos no localStorage (usuário logado), mostrar dashboard
-  function showDashboard(data) {
-    content.innerHTML = `
-      <h2>Olá, ${data.user.username}#${data.user.discriminator}</h2>
-      <img src="${data.user.avatarUrl}" alt="Avatar" class="avatar" />
-      <h3>Seus Servidores (admin)</h3>
-      <ul id="guilds"></ul>
-    `;
-
-    const guildsList = document.getElementById('guilds');
-    data.guilds.forEach(guild => {
-      const li = document.createElement('li');
-      li.textContent = guild.name;
-      li.onclick = () => {
-        window.location.href = `guild.html?id=${guild.id}&name=${encodeURIComponent(guild.name)}`;
-      };
-      guildsList.appendChild(li);
-    });
-  }
-
-  // Tenta pegar dados do localStorage
-  const savedData = localStorage.getItem('lilyDashboardUserData');
-  if (savedData) {
-    try {
-      const data = JSON.parse(savedData);
-      showDashboard(data);
-    } catch {}
-  }
 </script>
-
 </body>
 </html>
