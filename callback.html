@@ -1,35 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Callback - Lily Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lily Dashboard - Callback</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #141414;
+    color: white;
+    padding: 30px;
+  }
+  .avatar {
+    border-radius: 50%;
+    width: 96px;
+    height: 96px;
+  }
+  h1, h2 {
+    margin-top: 0;
+  }
+  .guild {
+    background: #222;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 8px;
+  }
+</style>
 </head>
 <body>
-  <h2>Carregando...</h2>
+<h1>Bem vindo, <span id="username"></span>!</h1>
+<img id="avatar" class="avatar" alt="Avatar do usuário" />
+<h2>Seus Servidores (onde é admin):</h2>
+<div id="guilds"></div>
 
 <script>
-  async function init() {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    if (!code) {
-      document.body.innerHTML = '<p>Erro: código OAuth2 não encontrado.</p>';
+  // Pega o token do hash da URL
+  function getAccessTokenFromHash() {
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    return params.get('access_token');
+  }
+
+  async function fetchDiscordApi(endpoint, token) {
+    const res = await fetch(`https://discord.com/api/v10/${endpoint}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error(`Erro ${res.status} ao acessar ${endpoint}`);
+    return res.json();
+  }
+
+  async function main() {
+    const token = getAccessTokenFromHash();
+    if (!token) {
+      document.body.innerHTML = '<h1>Erro: Token de acesso não encontrado.</h1>';
       return;
     }
 
     try {
-      const res = await fetch(`https://fps.ms/api/callback?code=${code}`);
-      if (!res.ok) throw new Error('Erro na requisição');
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
+      const user = await fetchDiscordApi('users/@me', token);
+      const guilds = await fetchDiscordApi('users/@me/guilds', token);
 
-      // Salvar localmente e voltar para index
-      localStorage.setItem('lilyDashboardUserData', JSON.stringify(data));
-      window.location.href = '/';
+      // Filtra guildas onde usuário é admin (perm 0x8 = admin)
+      const adminGuilds = guilds.filter(g => (g.permissions & 0x8) === 0x8);
+
+      document.getElementById('username').textContent = `${user.username}#${user.discriminator}`;
+      const avatarUrl = user.avatar
+        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+        : `https://cdn.discordapp.com/embed/avatars/${user.discriminator % 5}.png`;
+      document.getElementById('avatar').src = avatarUrl;
+
+      const guildsDiv = document.getElementById('guilds');
+      if (adminGuilds.length === 0) {
+        guildsDiv.textContent = 'Você não é admin em nenhum servidor.';
+      } else {
+        adminGuilds.forEach(g => {
+          const div = document.createElement('div');
+          div.className = 'guild';
+          div.textContent = g.name;
+          guildsDiv.appendChild(div);
+        });
+      }
     } catch (err) {
-      document.body.innerHTML = `<p>Erro ao obter dados: ${err.message}</p>`;
+      document.body.innerHTML = `<h1>Erro ao obter dados: ${err.message}</h1>`;
     }
   }
-  init();
+
+  main();
 </script>
 </body>
 </html>
