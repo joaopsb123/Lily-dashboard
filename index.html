@@ -18,7 +18,7 @@
   const CLIENT_ID = '1392176069070557365';
   const REDIRECT_URI = 'https://lily-dashboard-five.vercel.app/callback.html';
   document.getElementById('login').onclick = () => {
-    window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify guilds`;
+    window.location.href = `https://discord.com/oauth2/authorize?client_id=1392176069070557365&response_type=code&redirect_uri=https%3A%2F%2Flily-dashboard-five.vercel.app%2Fcallback.html&scope=identify+email+guilds`;
   };
 </script>
 </body>
