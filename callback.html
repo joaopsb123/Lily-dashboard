@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF‑8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Servidores – Lily Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -14,7 +14,7 @@
       --radius: 12px;
       --shadow: rgba(0,0,0,0.05);
     }
-    * { box-sizing:border-box; margin:0; padding:0; }
+    *{box-sizing:border-box;margin:0;padding:0;}
     body {
       background: var(--bg);
       font-family:'Inter',sans-serif;
@@ -50,7 +50,7 @@
     .guilds li:hover {
       background:var(--accent); color:#fff;
     }
-    .guilds li img {
+    .guilds img {
       width:40px; height:40px; border-radius:50%;
       background:#ddd;
     }
@@ -63,52 +63,48 @@
     }
     .present { background:#01902C; color:#fff; }
     .absent { background:#f04747; color:#fff; }
+    .error { color:#f04747; text-align:center; }
+    .loading { color:var(--muted); text-align:center; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div id="root">
-      <p style="text-align:center; color:var(--muted)">Carregando...</p>
-    </div>
+  <div class="card" id="root">
+    <p class="loading">Carregando...</p>
   </div>
   <script>
-    const qp = k=>new URLSearchParams(location.search).get(k);
     const root = document.getElementById('root');
+    const qp = k=>new URLSearchParams(location.search).get(k);
 
     async function init() {
       const code = qp('code');
-      if(!code) return root.innerHTML = '<p style="color:red; text-align:center;">Código ausente.</p>';
+      if (!code) return root.innerHTML='<p class="error">Código OAuth2 ausente.</p>';
       try {
-        const res = await fetch(`https://fps.ms/api/callback?code=${code}`);
+        const res = await fetch(`https://fps.ms/api/callback?code=${encodeURIComponent(code)}`);
+        if (!res.ok) throw new Error('Falha na API');
         const data = await res.json();
         render(data);
-      } catch {
-        root.innerHTML = '<p style="color:red; text-align:center;">Falha ao carregar dados.</p>';
+      } catch (e) {
+        root.innerHTML='<p class="error">Erro ao obter dados.</p>';
       }
     }
 
     function render({user, guilds}) {
-      root.innerHTML = '';
-      const userEl = document.createElement('div');
-      userEl.className = 'user';
-      userEl.innerHTML = `
-        <img src="${user.avatarUrl}" alt="">
-        <div>
-          <h2>${user.username}</h2>
-          <p style="color:var(--muted);">ID: ${user.id}</p>
-        </div>`;
-      root.appendChild(userEl);
+      root.innerHTML='';
+      const u = document.createElement('div');
+      u.className='user';
+      u.innerHTML=`<img src="${user.avatarUrl}" alt="Avatar"><div><h2>${user.username}</h2><p class="muted">ID: ${user.id}</p></div>`;
+      root.appendChild(u);
 
       const ul = document.createElement('ul');
-      ul.className = 'guilds';
-      if(guilds.length === 0) {
-        ul.innerHTML = `<li>Nenhume servidor disponível.</li>`;
+      ul.className='guilds';
+      if (guilds.length===0) {
+        ul.innerHTML='<p class="loading">Nenhum servidor disponível.</p>';
       } else {
         guilds.forEach(g=>{
-          const li = document.createElement('li');
-          li.onclick = ()=>location.href = `/guild.html?id=${g.id}`;
-          li.innerHTML = `
-            <img src="https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png" alt="">
+          const li=document.createElement('li');
+          li.onclick=()=>location.href=`/guild.html?id=${g.id}`;
+          li.innerHTML=`
+            <img src="https://cdn.discordapp.com/icons/${g.id}/${g.icon || ''}.png" onerror="this.src='https://via.placeholder.com/40';">
             <span class="name">${g.name}</span>
             <span class="status ${g.hasBot?'present':'absent'}">
               ${g.hasBot?'Bot presente':'Bot ausente'}
