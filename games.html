@@ -1,38 +1,67 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><meta viewport="width=device-width"><title>Jogos</title>
-<style>
-body{margin:0;padding:20px;background:#121212;color:white;font-family:sans-serif}
-header{display:flex;gap:15px;padding:10px;background:#1f1f1f}
-header a{color:#5865F2;text-decoration:none}
-button{margin:10px;padding:10px;background:#5865F2;border:none;color:white;border-radius:6px;cursor:pointer}
-canvas{border:2px solid #444;margin-top:10px;display:none}
-</style></head><body>
-<header><a href="feed.html">Feed</a><a href="profile.html">Perfil</a></header>
-<h1>Mini‑jogos</h1>
-<button onclick="launchPong()">Pong</button>
-<button onclick="clearGame()">Limpar</button>
-<canvas id="pong" width="400" height="300"></canvas>
-<script>
-function launchPong(){
-  const c = document.getElementById('pong');
-  c.style.display = 'block';
-  const ctx = c.getContext('2d');
-  let x=200,y=150,dx=2,dy=2,px=180, frame;
-  function draw(){
-    ctx.fillStyle = '#000c'; ctx.fillRect(0,0,400,300);
-    ctx.fillStyle = '#fff'; ctx.fillRect(px,280,40,10);
-    ctx.beginPath(); ctx.arc(x,y,7,0,2*Math.PI); ctx.fill();
-    x+=dx; y+=dy;
-    if(x<7||x>393) dx = -dx;
-    if(y<7) dy = -dy;
-    if(y>273 && x > px && x < px+40) dy = -dy;
-    if(y>300){ cancelAnimationFrame(frame); alert('Game over'); }
-    frame = requestAnimationFrame(draw);
-  }
-  frame = requestAnimationFrame(draw);
-  window.onmousemove = e => { px = Math.max(0,Math.min(360,e.clientX-c.offsetLeft-20)); }
-}
-function clearGame(){
-  document.getElementById('pong').style.display = 'none';
-}
-</script>
-</body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Jogos – Lily Social</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
+    body{background:#2f3136;color:#dcddde}
+    nav{background:#202225;padding:10px 20px;display:flex;align-items:center}
+    nav a{color:#b9bbbe;margin-right:20px;text-decoration:none}
+    nav a.active,nav a:hover{color:white}
+    nav .spacer{flex:1}
+    nav button{background:#5865F2;border:none;padding:6px 12px;border-radius:4px;color:white;cursor:pointer}
+    .container{max-width:600px;margin:20px auto;text-align:center}
+    button.game{background:#7289da;border:none;padding:10px 20px;border-radius:4px;color:white;cursor:pointer;margin:10px}
+    canvas{margin-top:20px;border:2px solid #444;display:none}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="feed.html">Feed</a>
+    <a href="profile.html">Perfil</a>
+    <a href="search.html">Buscar</a>
+    <a href="games.html" class="active">Jogos</a>
+    <div class="spacer"></div>
+    <button onclick="logout()">Logout</button>
+  </nav>
+
+  <div class="container">
+    <h1>Jogos</h1>
+    <button class="game" onclick="launchPong()">Pong</button>
+    <button class="game" onclick="clearGame()">Parar</button>
+    <canvas id="pong" width="400" height="300"></canvas>
+  </div>
+
+  <script>
+    const data = JSON.parse(localStorage.getItem('lilyData')||'{}');
+    if(!data.user) return logout();
+    function logout(){ localStorage.clear(); location.href='index.html'; }
+
+    function launchPong(){
+      const c = document.getElementById('pong');
+      c.style.display='block';
+      const ctx = c.getContext('2d');
+      let x=200,y=150,dx=2,dy=2,px=180,frame;
+      function draw(){
+        ctx.fillStyle='#000'; ctx.fillRect(0,0,400,300);
+        ctx.fillStyle='#fff'; ctx.fillRect(px,280,40,10);
+        ctx.beginPath(); ctx.arc(x,y,7,0,2*Math.PI); ctx.fill();
+        x+=dx; y+=dy;
+        if(x<7||x>393) dx=-dx;
+        if(y<7) dy=-dy;
+        if(y>273 && x>px && x<px+40) dy=-dy;
+        if(y>300){ cancelAnimationFrame(frame); alert('Game Over'); }
+        frame = requestAnimationFrame(draw);
+      }
+      frame = requestAnimationFrame(draw);
+      window.onmousemove = e=> px = Math.max(0, Math.min(360, e.clientX - c.offsetLeft - 20));
+    }
+    function clearGame(){
+      const c = document.getElementById('pong');
+      c.style.display='none';
+      window.onmousemove = null;
+    }
+  </script>
+</body>
+</html>
