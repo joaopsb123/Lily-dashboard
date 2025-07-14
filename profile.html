@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width"><title>Perfil</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>body{font-family:'Inter',sans-serif;background:#121212;color:#fff;margin:0}header{padding:10px 20px;background:#1f1f1f;display:flex;justify-content:space-between;align-items:center}a{color:#5865F2;text-decoration:none}.container{padding:20px;max-width:500px;margin:auto}.profile{display:flex;align-items:center;gap:15px}.profile img{border-radius:50%;width:80px;height:80px}.profile h2{margin:0}.input,.btn{display:block;width:100%;padding:10px;margin-top:10px;border-radius:6px;font-size:1em}.input{background:#2a2a2a;color:#fff;border:none}.btn{background:#5865F2;color:#fff;border:none;cursor:pointer}</style>
+</head><body>
+<header><a href="feed.html">Feed</a><a href="games.html">Jogos</a><a href="guild.html">Configurar</a></header>
+<div class="container">
+  <div class="profile">
+    <img id="ava"><h2 id="usern"></h2>
+  </div>
+  <label>Biografia:<textarea id="bio" class="input" rows="4" placeholder="Fale sobre você..."></textarea></label>
+  <button class="btn" onclick="saveBio()">Salvar</button>
+</div>
+<script>
+const data = JSON.parse(localStorage.getItem('lilyData')||'{}');
+if(!data.user) return location.href='index.html';
+document.getElementById('ava').src=data.user.avatarUrl;
+document.getElementById('usern').textContent=`${data.user.username}#${data.user.discriminator}`;
+let bio = localStorage.getItem('lilyBio')||'';
+document.getElementById('bio').value = bio;
+function saveBio(){
+  localStorage.setItem('lilyBio', document.getElementById('bio').value);
+  alert('Bio salva!');
+}
+</script>
+</body></html>
