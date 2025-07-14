@@ -1,59 +1,57 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Dashboard do Servidor</title>
-<style>
-  body{margin:0;padding:20px;font-family:sans-serif;background:#121212;color:#fff;}
-  h1{text-align:center;}
-  .profile{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
-  .profile img{width:60px;height:60px;border-radius:50%;}
-  .guild{background:#1E1E1E;padding:15px;border-radius:8px;margin-bottom:10px;cursor:pointer;}
-  form{background:#1E1E1E;padding:20px;border-radius:8px;max-width:400px;margin:auto;}
-  label{display:flex;justify-content:space-between;margin-bottom:15px;}
-  select,button{padding:8px;border:none;border-radius:6px;}
-  button{width:100%;background:#6A1B9A;color:#fff;cursor:pointer;}
-</style>
+<head>
+  <meta charset="UTF-8">
+  <title>Configuração</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .guild {
+      background: #1f1f1f;
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    img {
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
-  <div id="main"></div>
-<script>
-  const data = JSON.parse(localStorage.getItem('lilyData') || '{}');
-  const main = document.getElementById('main');
-  if(!data.user){ main.innerHTML='<p>Você não está logado. <a href="/">Login</a></p>'; throw ''; }
+  <h1>Olá, <span id="username"></span>!</h1>
+  <h2>Escolha um servidor para configurar:</h2>
+  <div id="guilds"></div>
 
-  main.innerHTML = `
-    <div class="profile">
-      <img src="${data.user.avatarUrl}" alt="Avatar"/>
-      <div><h1>${data.user.username}#${data.user.discriminator}</h1></div>
-    </div>
-    <h2>Servidores administrados</h2>
-    <div id="list"></div>
-    <h2>Configurações gerais</h2>
-    <form id="form">
-      <label>Tickets: <select id="tickets"><option value="on">On</option><option value="off">Off</option></select></label>
-      <label>Logs (entrada/saída): <select id="logs"><option value="on">On</option><option value="off">Off</option></select></label>
-      <label>Música: <select id="music"><option value="on">On</option><option value="off">Off</option></select></label>
-      <button type="submit">Salvar configurações</button>
-    </form>
-  `;
+  <script>
+    const data = JSON.parse(localStorage.getItem('lilyData'));
+    if (!data) {
+      document.body.innerHTML = '<p>Você não está logado.</p>';
+      throw new Error('Sem dados do usuário.');
+    }
 
-  const list = document.getElementById('list');
-  data.guilds.forEach(g => {
-    const div = document.createElement('div');
-    div.className = 'guild';
-    div.textContent = g.name;
-    list.appendChild(div);
-  });
+    document.getElementById('username').textContent = data.user.username;
 
-  const form = document.getElementById('form');
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const cfg = {
-      tickets: document.getElementById('tickets').value,
-      logs: document.getElementById('logs').value,
-      music: document.getElementById('music').value
-    };
-    alert('Configurações salvas:\n' + JSON.stringify(cfg,null,2));
-  });
-</script>
+    const guildsDiv = document.getElementById('guilds');
+    data.guilds.forEach(g => {
+      const el = document.createElement('div');
+      el.className = 'guild';
+      el.innerHTML = `
+        <strong>${g.name}</strong><br>
+        ID: ${g.id}<br>
+        <button onclick="alert('Abrir painel de ${g.name}')">Configurar</button>
+      `;
+      guildsDiv.appendChild(el);
+    });
+  </script>
 </body>
 </html>
