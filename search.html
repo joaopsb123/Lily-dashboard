@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head><meta charset="UTF-8"><title>Buscar</title></head><body>
+<input id="q"><button onclick="go()">Buscar</button>
+<div id="res"></div>
+<script>
+const data = JSON.parse(localStorage.getItem('lilyData')||'{}');
+function go(){
+  const q = document.getElementById('q').value;
+  fetch('/api/users.js?q='+encodeURIComponent(q))
+    .then(r=>r.json()).then(arr=>{
+      document.getElementById('res').innerHTML = arr.map(u=>`
+        <div><b>${u.username}</b><p>${u.bio||''}</p>
+        <button onclick="window.location='profile.html?user=${u.username}'">Ver perfil</button></div>`
+      ).join('');
+    });
+}
+</script>
+</body></html>
