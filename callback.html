@@ -14,7 +14,6 @@
       --text: #ffffff;
       --muted: #b9bbbe;
     }
-
     body {
       margin: 0;
       padding: 0;
@@ -27,7 +26,6 @@
       min-height: 100vh;
       text-align: center;
     }
-
     .dashboard {
       background: var(--panel);
       padding: 30px;
@@ -36,27 +34,23 @@
       width: 95%;
       max-width: 650px;
     }
-
     .user-info {
       display: flex;
       align-items: center;
       gap: 16px;
       margin-bottom: 25px;
     }
-
     .user-info img {
       border-radius: 50%;
       width: 70px;
       height: 70px;
       border: 2px solid var(--accent);
     }
-
     .guild-list {
       list-style: none;
       padding: 0;
       margin: 0;
     }
-
     .guild-list li {
       display: flex;
       align-items: center;
@@ -67,11 +61,9 @@
       transition: background 0.2s;
       cursor: pointer;
     }
-
     .guild-list li:hover {
       background: var(--accent);
     }
-
     .guild-icon {
       width: 40px;
       height: 40px;
@@ -79,7 +71,6 @@
       object-fit: cover;
       background: var(--panel);
     }
-
     .guild-name {
       font-weight: 600;
       color: var(--text);
@@ -87,7 +78,6 @@
       margin-left: 12px;
       text-align: left;
     }
-
     .status-bot {
       font-size: 0.8rem;
       font-weight: bold;
@@ -96,32 +86,26 @@
       border-radius: 6px;
       color: var(--success);
     }
-
     .status-bot.absent {
       color: var(--error);
     }
-
     .loading,
     .error {
       font-size: 1.2rem;
       margin-top: 20px;
     }
-
     .error {
       color: var(--error);
     }
-
     @media screen and (max-width: 480px) {
       .user-info {
         flex-direction: column;
         align-items: center;
       }
-
       .guild-name {
         text-align: center;
         margin: 0;
       }
-
       .guild-list li {
         flex-direction: column;
         align-items: center;
@@ -134,26 +118,21 @@
   <div id="root">
     <div class="loading">Carregando informações do Discord...</div>
   </div>
-
   <script>
     async function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
     }
-
     async function fetchUserData(code) {
       const response = await fetch(`/api/callback?code=${code}`);
       if (!response.ok) throw new Error("Erro ao obter dados do servidor");
       return await response.json();
     }
-
     function renderDashboard(data) {
       const root = document.getElementById("root");
       root.innerHTML = "";
-
       const dash = document.createElement("div");
       dash.classList.add("dashboard");
-
       const userDiv = document.createElement("div");
       userDiv.classList.add("user-info");
       userDiv.innerHTML = `
@@ -164,10 +143,8 @@
         </div>
       `;
       dash.appendChild(userDiv);
-
       const guildList = document.createElement("ul");
       guildList.classList.add("guild-list");
-
       if (data.guilds.length === 0) {
         guildList.innerHTML = `<li><span class="guild-name">Você não tem servidores com permissões suficientes.</span></li>`;
       } else {
@@ -175,7 +152,7 @@
           const li = document.createElement("li");
           const botStatusClass = guild.hasBot ? "status-bot" : "status-bot absent";
           li.innerHTML = `
-            <img class="guild-icon" src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png" alt="Ícone do servidor" onerror="this.src='https://via.placeholder.com/40?text=?'" />
+            <img class="guild-icon" src=" https://cdn.discordapp.com/icons/ ${guild.id}/${guild.icon}.png" alt="Ícone do servidor" onerror="this.src='https://via.placeholder.com/40?text=?'" />
             <span class="guild-name">${guild.name}</span>
             <span class="${botStatusClass}">${guild.hasBot ? "Bot presente" : "Bot ausente"}</span>
           `;
@@ -185,18 +162,15 @@
           guildList.appendChild(li);
         });
       }
-
       dash.appendChild(guildList);
       root.appendChild(dash);
     }
-
     async function main() {
       const code = await getQueryParam("code");
       if (!code) {
         document.getElementById("root").innerHTML = '<p class="error">Código OAuth2 ausente na URL.</p>';
         return;
       }
-
       try {
         const data = await fetchUserData(code);
         renderDashboard(data);
@@ -204,7 +178,6 @@
         document.getElementById("root").innerHTML = `<p class="error">Erro ao carregar dados: ${err.message}</p>`;
       }
     }
-
     main();
   </script>
 </body>
