@@ -1,74 +1,67 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<title>Buscar Usuário</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    max-width: 600px;
-    margin: 30px auto;
-    padding: 10px;
-  }
-  input, button {
-    padding: 8px 10px;
-    font-size: 1rem;
-  }
-  button {
-    background-color: #5865f2;
-    border: none;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 8px;
-  }
-  button:hover {
-    background-color: #4752c4;
-  }
-  #res > div {
-    border: 1px solid #ccc;
-    margin-top: 15px;
-    padding: 12px;
-    border-radius: 6px;
-  }
-  #res button {
-    background-color: #7289da;
-    margin-top: 8px;
-  }
-</style>
+  <meta charset="UTF-8"/>
+  <title>Buscar – Lily Social</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
+    body{background:#2f3136;color:#dcddde}
+    nav{background:#202225;padding:10px 20px;display:flex;align-items:center}
+    nav a{color:#b9bbbe;margin-right:20px;text-decoration:none}
+    nav a.active,nav a:hover{color:white}
+    nav .spacer{flex:1}
+    nav button{background:#5865F2;border:none;padding:6px 12px;border-radius:4px;color:white;cursor:pointer}
+    .container{max-width:600px;margin:20px auto;padding:0 10px}
+    .search-box{display:flex;margin-bottom:20px}
+    .search-box input{flex:1;padding:8px;border-radius:4px;border:none;background:#36393f;color:white}
+    .search-box button{margin-left:8px;padding:8px 14px;border:none;border-radius:4px;background:#5865F2;color:white;cursor:pointer}
+    .result{background:#36393f;padding:12px;border-radius:6px;margin-bottom:10px;display:flex;align-items:center}
+    .result img{width:40px;height:40px;border-radius:50%;margin-right:10px; background:#202225;}
+    .result button{margin-left:auto;padding:6px 12px;border:none;border-radius:4px;background:#7289da;color:white;cursor:pointer}
+  </style>
 </head>
 <body>
+  <nav>
+    <a href="feed.html">Feed</a>
+    <a href="profile.html">Perfil</a>
+    <a href="search.html" class="active">Buscar</a>
+    <a href="games.html">Jogos</a>
+    <div class="spacer"></div>
+    <button onclick="logout()">Logout</button>
+  </nav>
 
-<h2>Buscar Usuário</h2>
-<input id="q" placeholder="Nome do usuário..." />
-<button onclick="go()">Buscar</button>
+  <div class="container">
+    <div class="search-box">
+      <input id="q" placeholder="Digite o nome de usuário..."/>
+      <button onclick="go()">Buscar</button>
+    </div>
+    <div id="res"></div>
+  </div>
 
-<div id="res"></div>
+  <script>
+    const data = JSON.parse(localStorage.getItem('lilyData')||'{}');
+    if(!data.user) return logout();
+    function logout(){ localStorage.clear(); location.href='index.html'; }
 
-<script>
-const data = JSON.parse(localStorage.getItem('lilyData') || '{}');
-
-function go() {
-  const q = document.getElementById('q').value.trim();
-  if (!q) return alert('Digite algo para buscar!');
-  fetch('/api/users.js?q=' + encodeURIComponent(q))
-    .then(r => r.json())
-    .then(users => {
-      const container = document.getElementById('res');
-      if (users.length === 0) {
-        container.innerHTML = '<p>Nenhum usuário encontrado.</p>';
-        return;
-      }
-      container.innerHTML = users.map(u => `
-        <div>
-          <strong>${u.username}</strong>
-          <p>${u.bio || ''}</p>
-          <button onclick="window.location='profile.html?user=${encodeURIComponent(u.username)}'">Ver Perfil</button>
-        </div>
-      `).join('');
-    });
-}
-</script>
-
+    function go(){
+      const q = document.getElementById('q').value.trim();
+      if(!q) return alert('Digite algo!');
+      fetch('/api/users.js?q='+encodeURIComponent(q))
+        .then(r=>r.json()).then(users=>{
+          const rdiv = document.getElementById('res');
+          if(!users.length) return rdiv.innerHTML='<p>Nenhum usuário encontrado.</p>';
+          rdiv.innerHTML = users.map(u=>`
+            <div class="result">
+              <img src="https://cdn.discordapp.com/embed/avatars/${Math.floor(Math.random()*5)}.png">
+              <div>
+                <strong>${u.username}</strong><br><small>${u.bio||''}</small>
+              </div>
+              <button onclick="view('${encodeURIComponent(u.username)}')">Perfil</button>
+            </div>
+          `).join('');
+        });
+    }
+    function view(u){ window.location='profile.html?user='+u; }
+  </script>
 </body>
 </html>
