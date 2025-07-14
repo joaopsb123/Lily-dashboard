@@ -1,109 +1,104 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Configurações – Lily Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <title>Configurar Servidor</title>
   <style>
-    :root {
-      --bg:#f5f7fa;
-      --surface:#fff;
-      --accent:#0E65E3;
-      --text:#43484A;
-      --muted:#A0B4C1;
-      --radius:12px;
-      --shadow:rgba(0,0,0,0.05);
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #4a148c;
+      color: white;
+      padding: 20px;
     }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body {background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);padding:2rem;min-height:100vh;}
-    .card {
-      background:var(--surface);
-      border-radius:var(--radius);
-      max-width:500px; width:100%;
-      margin:0 auto;
-      padding:2rem;
-      box-shadow:0 4px 20px var(--shadow);
+    h1 {
+      margin-bottom: 20px;
     }
-    h1 {text-align:center;margin-bottom:1.5rem;font-weight:600;}
-    label {display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;}
-    input[type=checkbox] {transform:scale(1.2);}
-    input, textarea {
-      width:100%;
-      padding:0.75rem;
-      margin-bottom:1rem;
-      border:1px solid var(--shadow);
-      border-radius:var(--radius);
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+    input, select {
+      margin-top: 5px;
+      padding: 8px;
+      width: 300px;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
     }
     button {
-      width:100%;
-      padding:0.75rem;
-      background:var(--accent);
-      color:#fff;
-      border:none;
-      border-radius:var(--radius);
-      font-size:1rem;
-      font-weight:600;
-      cursor:pointer;
-      transition:background 0.2s;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #6a1b9a;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
     }
-    button:hover { background:#0C4AC2; }
-    .status-msg { text-align:center; margin-top:1rem; font-weight:600;}
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Configurações do Servidor</h1>
-    <form id="f">
-      <label><input type="checkbox" id="welcome_enabled"> Ativar mensagem de boas-vindas</label>
-      <input type="text" id="welcome_channel" placeholder="ID do canal">
-      <textarea id="welcome_message" rows="3" placeholder="Mensagem (ex: Bem‑vindo(a) {user}!)"></textarea>
-      <label><input type="checkbox" id="tickets_enabled"> Ativar tickets</label>
-      <button type="submit">Salvar</button>
-      <p id="status" class="status-msg"></p>
-    </form>
-  </div>
-  <script>
-    const qp=k=>new URLSearchParams(location.search).get(k);
-    const form=document.getElementById('f'), status=document.getElementById('status');
-    const gid=qp('id');
-    if (!gid) status.innerText='ID do servidor ausente';
+  <h1 id="guildName">Configuração do Servidor</h1>
 
-    async function load(){
-      try {
-        const res=await fetch(`https://fps.ms/api/guild?id=${gid}`);
-        if(!res.ok) throw 0;
-        const d=await res.json();
-        document.getElementById('welcome_enabled').checked=d.welcome_enabled||false;
-        document.getElementById('welcome_channel').value=d.welcome_channel||'';
-        document.getElementById('welcome_message').value=d.welcome_message||'';
-        document.getElementById('tickets_enabled').checked=d.tickets_enabled||false;
-      } catch {
-        status.innerText='Erro ao carregar'; status.style.color='#f04747';
-      }
-    }
+  <form id="configForm">
+    <label>
+      Sistema de Tickets:
+      <select name="tickets" id="tickets">
+        <option value="enabled">Ativado</option>
+        <option value="disabled">Desativado</option>
+      </select>
+    </label>
 
-    form.onsubmit=async e=>{
-      e.preventDefault();
-      const cfg={
-        welcome_enabled:document.getElementById('welcome_enabled').checked,
-        welcome_channel:document.getElementById('welcome_channel').value.trim(),
-        welcome_message:document.getElementById('welcome_message').value.trim(),
-        tickets_enabled:document.getElementById('tickets_enabled').checked,
-      };
-      try {
-        const res=await fetch(`https://fps.ms/api/guild?id=${gid}`, {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify(cfg)
-        });
-        if(!res.ok) throw 0;
-        status.innerText='Salvo com sucesso!'; status.style.color='#01902C';
-      } catch {
-        status.innerText='Erro ao salvar'; status.style.color='#f04747';
-      }
+    <label>
+      Logs de Entrada/Saída:
+      <select name="logs" id="logs">
+        <option value="enabled">Ativado</option>
+        <option value="disabled">Desativado</option>
+      </select>
+    </label>
+
+    <label>
+      Sistema de Música:
+      <select name="music" id="music">
+        <option value="enabled">Ativado</option>
+        <option value="disabled">Desativado</option>
+      </select>
+    </label>
+
+    <button type="submit">Salvar Configurações</button>
+  </form>
+
+<script>
+  // Pega dados do servidor da query string
+  const params = new URLSearchParams(window.location.search);
+  const guildName = params.get('name');
+  const guildId = params.get('id');
+
+  if (!guildName || !guildId) {
+    alert('Servidor não especificado.');
+    window.location.href = '/';
+  }
+
+  document.getElementById('guildName').textContent = `Configuração do Servidor: ${guildName}`;
+
+  const form = document.getElementById('configForm');
+
+  form.onsubmit = (e) => {
+    e.preventDefault();
+
+    // Aqui você salvaria as configs num banco ou API, agora só console.log
+    const config = {
+      guildId,
+      tickets: form.tickets.value,
+      logs: form.logs.value,
+      music: form.music.value,
     };
 
-    load();
-  </script>
+    alert('Configurações salvas (simulação): ' + JSON.stringify(config));
+
+    // Pode redirecionar ou atualizar
+    // window.location.href = '/';
+  };
+</script>
 </body>
 </html>
