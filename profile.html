@@ -1,30 +1,27 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width"><title>Perfil</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<style>
-body{margin:0;padding:20px;background:#121212;color:white;font-family:'Inter',sans-serif}
-header{display:flex;gap:15px;padding:10px;background:#1f1f1f}
-header a{color:#5865F2;text-decoration:none}
-.container{max-width:500px;margin:auto}
-.profile{display:flex;gap:15px;align-items:center}
-.profile img{width:80px;height:80px;border-radius:50%}
-textarea{width:100%;height:100px;padding:10px;background:#2a2a2a;border:none;color:white;border-radius:6px;margin-top:10px}
-button{margin-top:10px;padding:10px;background:#5865F2;border:none;color:white;border-radius:6px;cursor:pointer}
-</style></head><body>
-<header><a href="feed.html">Feed</a><a href="games.html">Jogos</a></header>
-<div class="container">
-  <div class="profile"><img id="ava"><h2 id="usern"></h2></div>
-  <textarea id="bio" placeholder="Sua bio..."></textarea>
-  <button onclick="saveBio()">Salvar Bio</button>
-</div>
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Perfil</title></head><body>
+<button onclick="window.location='feed.html'">Voltar</button>
+<h2 id="name"></h2><img id="ava" width="80"><p id="bio"></p>
+<textarea id="nbio"></textarea><button onclick="saveBio()">Salvar bio</button>
 <script>
 const data = JSON.parse(localStorage.getItem('lilyData')||'{}');
-if(!data.user) location.href='index.html';
-document.getElementById('ava').src = data.user.avatarUrl;
-document.getElementById('usern').textContent = `${data.user.username}#${data.user.discriminator}`;
-document.getElementById('bio').value = localStorage.getItem('lilyBio') || '';
-function saveBio(){
-  localStorage.setItem('lilyBio', document.getElementById('bio').value);
-  alert('Bio salva!');
+const userQ = new URLSearchParams(location.search).get('user');
+const me = data.user.username+'#'+data.user.discriminator;
+const isMe = !userQ || userQ === me;
+
+function load(){
+  fetch(isMe ? '/api/users.js?user='+encodeURIComponent(JSON.stringify(data.user))
+    : '/api/users.js?q='+encodeURIComponent(userQ))
+    .then(r=>r.json()).then(u=>{
+      document.getElementById('name').textContent = u.username;
+      document.getElementById('bio').textContent = u.bio;
+    });
 }
+function saveBio(){
+  fetch('/api/users.js', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({user:data.user,bio:document.getElementById('nbio').value})
+  }).then(load);
+}
+load();
 </script>
 </body></html>
