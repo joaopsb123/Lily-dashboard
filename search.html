@@ -1,18 +1,74 @@
-<!DOCTYPE html><html lang="pt-BR">
-<head><meta charset="UTF-8"><title>Buscar</title></head><body>
-<input id="q"><button onclick="go()">Buscar</button>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Buscar Usuário</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 10px;
+  }
+  input, button {
+    padding: 8px 10px;
+    font-size: 1rem;
+  }
+  button {
+    background-color: #5865f2;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  button:hover {
+    background-color: #4752c4;
+  }
+  #res > div {
+    border: 1px solid #ccc;
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 6px;
+  }
+  #res button {
+    background-color: #7289da;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<h2>Buscar Usuário</h2>
+<input id="q" placeholder="Nome do usuário..." />
+<button onclick="go()">Buscar</button>
+
 <div id="res"></div>
+
 <script>
-const data = JSON.parse(localStorage.getItem('lilyData')||'{}');
-function go(){
-  const q = document.getElementById('q').value;
-  fetch('/api/users.js?q='+encodeURIComponent(q))
-    .then(r=>r.json()).then(arr=>{
-      document.getElementById('res').innerHTML = arr.map(u=>`
-        <div><b>${u.username}</b><p>${u.bio||''}</p>
-        <button onclick="window.location='profile.html?user=${u.username}'">Ver perfil</button></div>`
-      ).join('');
+const data = JSON.parse(localStorage.getItem('lilyData') || '{}');
+
+function go() {
+  const q = document.getElementById('q').value.trim();
+  if (!q) return alert('Digite algo para buscar!');
+  fetch('/api/users.js?q=' + encodeURIComponent(q))
+    .then(r => r.json())
+    .then(users => {
+      const container = document.getElementById('res');
+      if (users.length === 0) {
+        container.innerHTML = '<p>Nenhum usuário encontrado.</p>';
+        return;
+      }
+      container.innerHTML = users.map(u => `
+        <div>
+          <strong>${u.username}</strong>
+          <p>${u.bio || ''}</p>
+          <button onclick="window.location='profile.html?user=${encodeURIComponent(u.username)}'">Ver Perfil</button>
+        </div>
+      `).join('');
     });
 }
 </script>
-</body></html>
+
+</body>
+</html>
