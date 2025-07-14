@@ -5,15 +5,15 @@
   <title>Jogos – Lily Social</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
-    body{background:#2f3136;color:#dcddde}
+    body{background:#18191c;color:#e4e6eb}
     nav{background:#202225;padding:10px 20px;display:flex;align-items:center}
-    nav a{color:#b9bbbe;margin-right:20px;text-decoration:none}
-    nav a.active,nav a:hover{color:white}
+    nav a{color:#b9bbbe;margin-right:20px;text-decoration:none;font-weight:500}
+    nav a.active,nav a:hover{color:#fff}
     nav .spacer{flex:1}
-    nav button{background:#5865F2;border:none;padding:6px 12px;border-radius:4px;color:white;cursor:pointer}
+    nav button{background:#5865f2;border:none;padding:6px 12px;border-radius:4px;color:white;cursor:pointer}
     .container{max-width:600px;margin:20px auto;text-align:center}
-    button.game{background:#7289da;border:none;padding:10px 20px;border-radius:4px;color:white;cursor:pointer;margin:10px}
-    canvas{margin-top:20px;border:2px solid #444;display:none}
+    button.game{background:#7289da;border:none;padding:10px 20px;border-radius:6px;color:white;cursor:pointer;margin:10px}
+    canvas{border:2px solid #444;margin-top:20px;display:none}
   </style>
 </head>
 <body>
@@ -27,15 +27,15 @@
   </nav>
 
   <div class="container">
-    <h1>Jogos</h1>
+    <h1>Mini‑jogos</h1>
     <button class="game" onclick="launchPong()">Pong</button>
-    <button class="game" onclick="clearGame()">Parar</button>
+    <button class="game" onclick="clearGame()">Limpar</button>
     <canvas id="pong" width="400" height="300"></canvas>
   </div>
 
   <script>
     const data = JSON.parse(localStorage.getItem('lilyData')||'{}');
-    if(!data.user) return logout();
+    if(!data.user) logout();
     function logout(){ localStorage.clear(); location.href='index.html'; }
 
     function launchPong(){
@@ -55,8 +55,9 @@
         frame = requestAnimationFrame(draw);
       }
       frame = requestAnimationFrame(draw);
-      window.onmousemove = e=> px = Math.max(0, Math.min(360, e.clientX - c.offsetLeft - 20));
+      window.onmousemove = e=> px = Math.max(0,Math.min(360,e.clientX - c.offsetLeft - 20));
     }
+
     function clearGame(){
       const c = document.getElementById('pong');
       c.style.display='none';
