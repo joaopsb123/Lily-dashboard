@@ -1,121 +1,35 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Servidores – Lily Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #f5f7fa;
-      --surface: #fff;
-      --accent: #0E65E3;
-      --text: #43484A;
-      --muted: #A0B4C1;
-      --radius: 12px;
-      --shadow: rgba(0,0,0,0.05);
-    }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body {
-      background: var(--bg);
-      font-family:'Inter',sans-serif;
-      color: var(--text);
-      min-height:100vh;
-      padding:2rem;
-    }
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: 0 4px 20px var(--shadow);
-      max-width:600px; width:100%; margin:0 auto;
-      padding:2rem;
-    }
-    .user {
-      display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;
-    }
-    .user img {
-      width:56px; height:56px; border-radius:50%;
-      border:2px solid var(--accent);
-    }
-    .guilds {
-      list-style:none; padding:0;
-    }
-    .guilds li {
-      display:flex; align-items:center;
-      justify-content:space-between;
-      padding:1rem; margin-top:1rem;
-      background:var(--bg); border-radius:var(--radius);
-      cursor:pointer;
-      transition: background 0.2s;
-    }
-    .guilds li:hover {
-      background:var(--accent); color:#fff;
-    }
-    .guilds img {
-      width:40px; height:40px; border-radius:50%;
-      background:#ddd;
-    }
-    .name { flex:1; margin-left:1rem; font-weight:600; text-align:left; }
-    .status {
-      padding:0.25rem 0.5rem;
-      border-radius:6px;
-      font-size:0.9rem;
-      font-weight:600;
-    }
-    .present { background:#01902C; color:#fff; }
-    .absent { background:#f04747; color:#fff; }
-    .error { color:#f04747; text-align:center; }
-    .loading { color:var(--muted); text-align:center; }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Callback - Lily Dashboard</title>
 </head>
 <body>
-  <div class="card" id="root">
-    <p class="loading">Carregando...</p>
-  </div>
-  <script>
-    const root = document.getElementById('root');
-    const qp = k=>new URLSearchParams(location.search).get(k);
+  <h2>Carregando...</h2>
 
-    async function init() {
-      const code = qp('code');
-      if (!code) return root.innerHTML='<p class="error">Código OAuth2 ausente.</p>';
-      try {
-        const res = await fetch(`https://fps.ms/api/callback?code=${encodeURIComponent(code)}`);
-        if (!res.ok) throw new Error('Falha na API');
-        const data = await res.json();
-        render(data);
-      } catch (e) {
-        root.innerHTML='<p class="error">Erro ao obter dados.</p>';
-      }
+<script>
+  async function init() {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (!code) {
+      document.body.innerHTML = '<p>Erro: código OAuth2 não encontrado.</p>';
+      return;
     }
 
-    function render({user, guilds}) {
-      root.innerHTML='';
-      const u = document.createElement('div');
-      u.className='user';
-      u.innerHTML=`<img src="${user.avatarUrl}" alt="Avatar"><div><h2>${user.username}</h2><p class="muted">ID: ${user.id}</p></div>`;
-      root.appendChild(u);
+    try {
+      const res = await fetch(`https://fps.ms/api/callback?code=${code}`);
+      if (!res.ok) throw new Error('Erro na requisição');
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
 
-      const ul = document.createElement('ul');
-      ul.className='guilds';
-      if (guilds.length===0) {
-        ul.innerHTML='<p class="loading">Nenhum servidor disponível.</p>';
-      } else {
-        guilds.forEach(g=>{
-          const li=document.createElement('li');
-          li.onclick=()=>location.href=`/guild.html?id=${g.id}`;
-          li.innerHTML=`
-            <img src="https://cdn.discordapp.com/icons/${g.id}/${g.icon || ''}.png" onerror="this.src='https://via.placeholder.com/40';">
-            <span class="name">${g.name}</span>
-            <span class="status ${g.hasBot?'present':'absent'}">
-              ${g.hasBot?'Bot presente':'Bot ausente'}
-            </span>`;
-          ul.appendChild(li);
-        });
-      }
-      root.appendChild(ul);
+      // Salvar localmente e voltar para index
+      localStorage.setItem('lilyDashboardUserData', JSON.stringify(data));
+      window.location.href = '/';
+    } catch (err) {
+      document.body.innerHTML = `<p>Erro ao obter dados: ${err.message}</p>`;
     }
-
-    init();
-  </script>
+  }
+  init();
+</script>
 </body>
 </html>
