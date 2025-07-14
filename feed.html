@@ -2,23 +2,29 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Feed – Lily Social</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
     body{background:#18191c;color:#e4e6eb}
     nav{background:#202225;padding:10px 20px;display:flex;align-items:center}
     nav a{color:#b9bbbe;margin-right:20px;text-decoration:none;font-weight:500}
-    nav a.active,nav a:hover{color:white}
+    nav a.active,nav a:hover{color:#fff}
     nav .spacer{flex:1}
     nav button{background:#5865f2;border:none;padding:6px 12px;border-radius:4px;color:white;cursor:pointer}
     .container{max-width:600px;margin:20px auto;padding:0 10px}
+    .stories{display:flex;overflow-x:auto;margin-bottom:20px}
+    .stories img{width:60px;height:60px;border-radius:50%;margin-right:10px;border:2px solid #5865f2;cursor:pointer}
     .new-post{background:#242526;padding:15px;border-radius:8px;margin-bottom:20px}
     .new-post textarea{width:100%;height:80px;padding:8px;border-radius:6px;border:none;background:#3a3c40;color:#e4e6eb}
     .new-post input{margin-top:10px;color:#b9bbbe}
     .new-post button{margin-top:10px;background:#5865f2;border:none;padding:8px 16px;border-radius:6px;color:white;cursor:pointer}
+    .search-post{margin:15px 0;text-align:right}
+    .search-post input{padding:6px;border-radius:4px;border:none;background:#3a3c40;color:#e4e6eb}
+    .search-post button{padding:6px 10px;border:none;border-radius:4px;background:#7289da;color:white;cursor:pointer;margin-left:6px}
     .post{background:#242526;padding:15px;border-radius:8px;margin-bottom:20px}
     .post-header{display:flex;align-items:center}
-    .post-header img{width:40px;height:40px;border-radius:50%;margin-right:10px}
+    .post-header img{width:40px;height:40px;border-radius:50%;margin-right:10px;background:#3a3c40}
     .post-content p{margin:10px 0}
     .post-content img{max-width:100%;border-radius:6px}
     .actions{margin-top:10px}
@@ -26,12 +32,9 @@
     .comments{margin-top:10px}
     .comments input{width:70%;padding:6px;border-radius:4px;border:none;background:#3a3c40;color:#e4e6eb}
     .comments button{background:#7289da;border:none;padding:6px 10px;border-radius:4px;color:white;cursor:pointer;margin-left:6px}
-    .stories{display:flex;overflow-x:auto;margin-bottom:20px}
-    .stories img{width:60px;height:60px;border-radius:50%;margin-right:10px;border:2px solid #5865f2;cursor:pointer}
   </style>
 </head>
 <body>
-
   <nav>
     <a href="feed.html" class="active">Feed</a>
     <a href="profile.html">Perfil</a>
@@ -50,6 +53,11 @@
       <button onclick="newPost()">Postar</button>
     </div>
 
+    <div class="search-post">
+      <input id="searchPost" placeholder="Filtrar posts..." />
+      <button onclick="filterPosts()">Buscar</button>
+    </div>
+
     <div id="feed"></div>
   </div>
 
@@ -58,60 +66,62 @@
     if(!data.user) logout();
     function logout(){ localStorage.clear(); location.href='index.html'; }
 
-    // Keys únicas
     const postsKey = `posts_${data.user.id}`;
-    const storiesKey = `stories_${data.user.id}`;
+    let allPosts = [];
 
-    // Carrega e renderiza posts
+    function loadStories(){
+      const sts = JSON.parse(localStorage.getItem(`stories_${data.user.id}`)||'[]');
+      document.getElementById('stories').innerHTML = sts.map((s,i)=>
+        `<img src="${s}" title="Story #${i+1}" onclick="alert('Story #${i+1}')">`
+      ).join('');
+    }
+
     function loadFeed(){
-      const posts = JSON.parse(localStorage.getItem(postsKey)||'[]');
-      document.getElementById('feed').innerHTML = posts.map((p,idx) => `
+      allPosts = JSON.parse(localStorage.getItem(postsKey)||'[]');
+      renderPosts(allPosts);
+    }
+
+    function renderPosts(list){
+      document.getElementById('feed').innerHTML = list.map((p,idx)=>`
         <div class="post">
           <div class="post-header">
-            <img src="${data.user.avatarUrl}" alt="avatar"/>
+            <img src="${data.user.avatarUrl||`https://cdn.discordapp.com/embed/avatars/${data.user.discriminator%5}.png`}" alt="avatar"/>
             <strong>${data.user.username}#${data.user.discriminator}</strong>
           </div>
           <div class="post-content">
             <p>${p.content}</p>
-            ${p.image?`<img src="${p.image}"/>`:''}
+            ${p.image?`<img src="${p.image}">`:''}
           </div>
         </div>
       `).join('');
     }
 
-    // Novo post
     function newPost(){
       const txt = document.getElementById('txt').value;
       const file = document.getElementById('img').files[0];
-      if(!txt.trim() && !file) return alert('Escreva ou selecione uma imagem');
+      if(!txt.trim()&& !file) return alert('Escreva algo ou escolha imagem');
       if(file){
-        const fr = new FileReader();
-        fr.onload = ()=>{
-          savePost(txt, fr.result);
-        };
+        const fr=new FileReader();
+        fr.onload=()=>savePost(txt,fr.result);
         fr.readAsDataURL(file);
       } else savePost(txt,null);
     }
     function savePost(content,image){
       const arr = JSON.parse(localStorage.getItem(postsKey)||'[]');
-      arr.unshift({content,image, ts: Date.now()});
-      localStorage.setItem(postsKey, JSON.stringify(arr));
+      arr.unshift({content,image,ts:Date.now()});
+      localStorage.setItem(postsKey,JSON.stringify(arr));
       document.getElementById('txt').value='';
       document.getElementById('img').value='';
       loadFeed();
     }
 
-    // Stories (não removem—apenas demo)
-    function loadStories(){
-      const sts = JSON.parse(localStorage.getItem(storiesKey)||'[]');
-      document.getElementById('stories').innerHTML = sts.map((s,idx)=>`
-        <img src="${s}" onclick="alert('Story #${idx+1}')"/>
-      `).join('');
+    function filterPosts(){
+      const term = document.getElementById('searchPost').value.toLowerCase();
+      renderPosts(allPosts.filter(p=>p.content.toLowerCase().includes(term)));
     }
 
-    // Iniciar
-    loadFeed();
     loadStories();
+    loadFeed();
   </script>
 </body>
 </html>
