@@ -1,48 +1,58 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width"><title>Feed</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<style>
-body{margin:0;background:#121212;color:white;font-family:'Inter',sans-serif}
-header{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:#1f1f1f}
-header a{color:#5865F2;text-decoration:none}
-.container{padding:20px;max-width:600px;margin:auto}
-textarea{width:100%;height:80px;padding:10px;background:#2a2a2a;border:none;border-radius:6px;color:white}
-button{margin-top:10px;padding:10px 20px;background:#5865F2;border:none;border-radius:6px;color:white;cursor:pointer}
-.post{background:#1f1f1f;padding:15px;border-radius:8px;margin-top:15px}
-.post .author{font-weight:600;color:#ccc;margin-bottom:6px}
-nav a{margin-left:15px}
-</style></head><body>
-<header>
-  <a href="feed.html">Feed</a>
-  <nav><a href="profile.html">Perfil</a><a href="games.html">Jogos</a></nav>
-</header>
-<div class="container">
-  <textarea id="newpost" placeholder="O que está pensando?"></textarea>
-  <button onclick="addPost()">Postar</button>
-  <div id="posts"></div>
-</div>
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+<title>Feed</title>
+<style>/* Simplificado */</style></head><body>
+<button onclick="window.location='search.html'">Buscar Usuário</button>
+<h2>Stories</h2><div id="stories"></div>
+<h2>Novo Post</h2>
+<textarea id="txt"></textarea><br/>
+<input type="file" id="img" accept="image/*"><br/>
+<button onclick="newPost()">Postar</button>
+<div id="feed"></div>
 <script>
 const data = JSON.parse(localStorage.getItem('lilyData')||'{}');
-if(!data.user) location.href='index.html';
-document.title = `${data.user.username} – Feed`;
-let posts = JSON.parse(localStorage.getItem('lilyPosts')||'[]');
-function render(){
-  const out = document.getElementById('posts');
-  out.innerHTML = '';
-  posts.slice().reverse().forEach(p=>{
-    const d = document.createElement('div');
-    d.className = 'post';
-    d.innerHTML = `<div class="author">${p.author}</div><div>${p.content}</div>`;
-    out.appendChild(d);
+function api(action, body) {
+  return fetch(`/api/posts.js?user=${encodeURIComponent(JSON.stringify(data.user))}`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({action,...body})
+  }).then(r=>r.json());
+}
+
+function loadFeed(){
+  fetch('/api/posts.js')
+    .then(r=>r.json())
+    .then(ps=>{document.getElementById('feed').innerHTML = ps.map(p=>`
+      <div style="border:1px solid #ccc;padding:10px">
+        <img src="${p.avatar}" width="30"> <b>${p.author}</b>
+        <p>${p.content}</p>
+        ${p.image ? `<img src="${p.image}" width="100">` : ''}
+        <p>❤️${p.likes.length} 💬${p.comments.length}</p>
+        <button onclick="like(${p.id})">Curtir</button>
+        <input id="c${p.id}" placeholder="Comentário"><button onclick="comment(${p.id})">Comentar</button>
+      </div>`).join('');});
+}
+function newPost(){
+  const txt = document.getElementById('txt').value;
+  const file = document.getElementById('img').files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = ()=> {
+      api('create', {content:txt,image:reader.result}).then(loadFeed);
+    };
+    reader.readAsDataURL(file);
+  } else api('create',{content:txt}).then(loadFeed);
+}
+function like(id){ api('like',{id}).then(loadFeed); }
+function comment(id){
+  const txt = document.getElementById('c'+id).value;
+  api('comment',{id,text:txt}).then(loadFeed);
+}
+loadFeed();
+
+// stories
+fetch(`/api/stories.js?user=${encodeURIComponent(JSON.stringify(data.user))}`)
+  .then(r=>r.json()).then(sts=>{
+    document.getElementById('stories').innerHTML =
+       sts.map(s=>`<img onclick="viewStory('${s.user}')" src="${s.image}" width="60">`).join('');
   });
-}
-render();
-function addPost(){
-  const txt = document.getElementById('newpost').value.trim();
-  if(!txt) return;
-  posts.push({author:`${data.user.username}#${data.user.discriminator}`, content:txt});
-  localStorage.setItem('lilyPosts', JSON.stringify(posts));
-  document.getElementById('newpost').value = '';
-  render();
-}
 </script>
 </body></html>
