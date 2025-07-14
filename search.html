@@ -41,29 +41,34 @@
 
   <script>
     const data = JSON.parse(localStorage.getItem('lilyData')||'{}');
-    if(!data.user) logout();
-    function logout(){ localStorage.clear(); location.href='index.html'; }
+    if (!data.user) logout();
+    function logout() { localStorage.clear(); location.href='index.html'; }
 
-    function go(){
+    async function go() {
       const q = document.getElementById('q').value.trim();
-      if(!q) return alert('Digite algo!');
-      fetch('/api/users.js?q='+encodeURIComponent(q))
-        .then(r=>r.json()).then(users=>{
-          const res = document.getElementById('res');
-          if(!users.length) return res.innerHTML = '<p>Nenhum usuário encontrado.</p>';
-          res.innerHTML = users.map(u=>`
-            <div class="result">
-              <img src="https://cdn.discordapp.com/embed/avatars/${Math.floor(Math.random()*5)}.png" alt="avatar">
-              <div>
-                <strong>${u.username}</strong><br>
-                <small>${u.bio||''}</small>
-              </div>
-              <button onclick="view('${encodeURIComponent(u.username)}')">Ver Perfil</button>
-            </div>
-          `).join('');
-        });
+      if (!q) return alert('Digite algo!');
+      const res = await fetch(
+        '/api/users.js?q=' + encodeURIComponent(q) +
+        '&user=' + encodeURIComponent(JSON.stringify(data.user))
+      );
+      const users = await res.json();
+      const rdiv = document.getElementById('res');
+      if (!users.length) {
+        return rdiv.innerHTML = '<p>Nenhum usuário encontrado.</p>';
+      }
+      rdiv.innerHTML = users.map(u => `
+        <div class="result">
+          <img src="https://cdn.discordapp.com/embed/avatars/${Math.floor(Math.random()*5)}.png" alt="avatar">
+          <div>
+            <strong>${u.username}</strong><br>
+            <small>${u.bio || ''}</small>
+          </div>
+          <button onclick="view('${encodeURIComponent(u.username)}')">Ver Perfil</button>
+        </div>
+      `).join('');
     }
-    function view(u){ window.location='profile.html?user='+u; }
+
+    function view(u) { window.location = 'profile.html?user=' + u; }
   </script>
 </body>
 </html>
