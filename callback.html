@@ -5,34 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Conectando...</title>
   <style>
-    body { 
-      margin:0; padding:0; 
-      display:flex; align-items:center; justify-content:center;
-      height:100vh; background:#18191c; color:#e4e6eb;
-      font-family:'Segoe UI', sans-serif; text-align:center;
-    }
-    #msg { font-size:1.2rem; }
+    body{margin:0;padding:0;display:flex;align-items:center;justify-content:center;
+    height:100vh;background:#18191c;color:#e4e6eb;font-family:'Segoe UI',sans-serif;}
+    #msg{font-size:1.2rem;text-align:center;}
   </style>
 </head>
 <body>
   <div id="msg">Conectando ao Discord...</div>
   <script>
-    (async () => {
-      const params = new URLSearchParams(location.search);
-      const code = params.get('code');
-      if (!code) {
-        msg.textContent = 'Erro: código OAuth2 ausente.';
-        return;
-      }
-      try {
+    (async()=>{
+      const p = new URLSearchParams(location.search);
+      const code = p.get('code');
+      if(!code){ msg.textContent='Erro: código OAuth2 ausente'; return; }
+      try{
         const res = await fetch(`/api/callback?code=${code}`);
-        if (!res.ok) throw new Error(await res.text());
+        if(!res.ok) throw new Error(await res.text());
         const data = await res.json();
         localStorage.setItem('lilyData', JSON.stringify(data));
-        location.href = 'feed.html';
-      } catch (e) {
+        location.href='feed.html';
+      }catch(e){
         console.error(e);
-        msg.textContent = 'Erro ao obter dados: ' + e.message;
+        msg.textContent='Erro ao obter dados: '+e.message;
       }
     })();
   </script>
