@@ -1,31 +1,38 @@
 <!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><meta viewport="width=device-width"><title>Jogos</title>
-<style>body{background:#121212;color:#fff;font-family:sans-serif;margin:0;padding:20px}header{padding:10px;background:#1f1f1f;display:flex;gap:15px}button{padding:10px 20px;background:#5865F2;color:#fff;border:none;border-radius:6px;cursor:pointer;margin:5px}canvas{border:2px solid #444;margin-top:15px}</style></head><body>
-<header><a href="feed.html">Feed</a><a href="profile.html">Perfil</a><a href="guild.html">Configurar</a></header>
-<h1>Jogos escondidos</h1>
-<button onclick="launchPong()">Pong 🎮</button>
-<button onclick="resetGame()">Limpar</button>
-<canvas id="pong" width="400" height="300" style="display:none;"></canvas>
+<style>
+body{margin:0;padding:20px;background:#121212;color:white;font-family:sans-serif}
+header{display:flex;gap:15px;padding:10px;background:#1f1f1f}
+header a{color:#5865F2;text-decoration:none}
+button{margin:10px;padding:10px;background:#5865F2;border:none;color:white;border-radius:6px;cursor:pointer}
+canvas{border:2px solid #444;margin-top:10px;display:none}
+</style></head><body>
+<header><a href="feed.html">Feed</a><a href="profile.html">Perfil</a></header>
+<h1>Mini‑jogos</h1>
+<button onclick="launchPong()">Pong</button>
+<button onclick="clearGame()">Limpar</button>
+<canvas id="pong" width="400" height="300"></canvas>
 <script>
 function launchPong(){
   const c = document.getElementById('pong');
-  c.style.display='block';
+  c.style.display = 'block';
   const ctx = c.getContext('2d');
-  let x=200,y=150,dx=2,dy=2,px=180;
+  let x=200,y=150,dx=2,dy=2,px=180, frame;
   function draw(){
-    ctx.fillStyle='#000c'; ctx.fillRect(0,0,400,300);
-    ctx.fillStyle='#fff'; ctx.fillRect(px,280,40,10);
-    ctx.beginPath();
-    ctx.arc(x,y,7,0,2*Math.PI); ctx.fill();
+    ctx.fillStyle = '#000c'; ctx.fillRect(0,0,400,300);
+    ctx.fillStyle = '#fff'; ctx.fillRect(px,280,40,10);
+    ctx.beginPath(); ctx.arc(x,y,7,0,2*Math.PI); ctx.fill();
     x+=dx; y+=dy;
-    if(x<7||x>393) dx=-dx;
-    if(y<7) dy=-dy;
-    if(y>273 && x>px && x<px+40) dy=-dy;
+    if(x<7||x>393) dx = -dx;
+    if(y<7) dy = -dy;
+    if(y>273 && x > px && x < px+40) dy = -dy;
     if(y>300){ cancelAnimationFrame(frame); alert('Game over'); }
     frame = requestAnimationFrame(draw);
   }
-  let frame = requestAnimationFrame(draw);
-  window.onmousemove = e=>px = Math.max(0, Math.min(360, e.clientX - c.offsetLeft - 20));
+  frame = requestAnimationFrame(draw);
+  window.onmousemove = e => { px = Math.max(0,Math.min(360,e.clientX-c.offsetLeft-20)); }
 }
-function resetGame(){ document.getElementById('pong').style.display='none'; cancelAnimationFrame(0); }
+function clearGame(){
+  document.getElementById('pong').style.display = 'none';
+}
 </script>
 </body></html>
