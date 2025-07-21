@@ -1,43 +1,77 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Lily Social</title>
-  <style>
-    * { box-sizing:border-box; margin:0; padding:0; }
-    body {
-      font-family:'Segoe UI',sans-serif;
-      background:#18191c;
-      color:#e4e6eb;
-      display:flex; align-items:center; justify-content:center;
-      height:100vh; text-align:center;
-    }
-    .card {
-      background:#242526;
-      padding:40px; border-radius:8px;
-      box-shadow:0 4px 12px rgba(0,0,0,0.6);
-    }
-    .card h1 { color:#fff; margin-bottom:20px; font-size:2.5rem; }
-    .card p { color:#b0b3b8; margin-bottom:30px; }
-    .btn {
-      display:inline-block;
-      background:#5865F2; color:#fff;
-      padding:12px 24px; border-radius:6px;
-      font-size:1rem; font-weight:600;
-      text-decoration:none; transition:.2s;
-    }
-    .btn:hover { background:#4752C4; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lily Bot</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #2c2f33;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin-top: 0;
+            color: #7289da;
+        }
+        .buttons {
+            margin: 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #7289da;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #677bc4;
+        }
+        .features {
+            margin-top: 30px;
+        }
+        .bot-image {
+            max-width: 300px;
+            margin: 20px auto;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Lily Social</h1>
-    <p>Faça login com Discord para acessar sua rede.</p>
-    <a class="btn"
-      href="https://discord.com/oauth2/authorize?client_id=1392176069070557365&redirect_uri=https%3A%2F%2Flily-dashboard-five.vercel.app%2Fcallback.html&response_type=code&scope=identify%20guilds">
-      Entrar com Discord
-    </a>
-  </div>
+    <div class="container">
+        <img src="YOUR_BOT_IMAGE_URL_HERE" alt="Lily Bot" class="bot-image">
+        <h1>Olá, eu sou a Lily</h1>
+        <h2>Eu sou um simples bot para o Discord</h2>
+        
+        <div class="buttons">
+            <a href="https://discord.com/oauth2/authorize?client_id=1388158298305597483&response_type=code&redirect_uri=https%3A%2F%2Flily-dashboard-five.vercel.app%2Fcallback.html&scope=identify+email+guilds" class="btn">Me adicione!</a>
+            <a href="#features" class="btn">Saiba Mais</a>
+        </div>
+        
+        <div class="features" id="features">
+            <p>+ Painel de Controle</p>
+            <p>+ Sistema de Tickets</p>
+            <p>+ Boas-vindas personalizadas</p>
+        </div>
+    </div>
 </body>
 </html>
