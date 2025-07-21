@@ -1,44 +1,33 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Lily Bot</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #2c2f33;
-            color: white;
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+    <title>Processando login...</title>
+    <script>
+        // Extrai o código da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        
+        if (code) {
+            // Envia o código para o backend
+            fetch(`/api/auth?code=${encodeURIComponent(code)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.token) {
+                        localStorage.setItem('discord_token', data.token);
+                        window.location.href = '/guild.html';
+                    } else {
+                        window.location.href = '/?error=auth_failed';
+                    }
+                })
+                .catch(() => {
+                    window.location.href = '/?error=server_error';
+                });
+        } else {
+            window.location.href = '/?error=no_code';
         }
-        .container {
-            padding: 20px;
-        }
-        .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #7289da;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    </script>
 </head>
 <body>
-    <div class="container">
-        <div class="loader"></div>
-        <p>Autenticando com Discord...</p>
-    </div>
-    <script src="/api/callback.js"></script>
+    <p>Processando autenticação com Discord...</p>
 </body>
 </html>
