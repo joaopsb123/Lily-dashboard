@@ -1,20 +1,89 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><meta viewport="width=device-width"><title>Configurar</title>
-<style>body{background:#121212;color:#fff;font-family:sans-serif;margin:0;padding:20px}header{padding:10px;background:#1f1f1f;display:flex;gap:15px}form{background:#1f1f1f;padding:20px;border-radius:8px;max-width:400px;margin:auto}label{display:flex;justify-content:space-between;margin-bottom:15px}select,button{padding:8px;border:none;border-radius:6px}button{width:100%;background:#5865F2;color:#fff;cursor:pointer}</style>
-</head><body>
-<header><a href="feed.html">Feed</a><a href="profile.html">Perfil</a><a href="games.html">Jogos</a></header>
-<h1>Configurações do Servidor</h1>
-<form>
-  <label>Tickets: <select id="tickets"><option>on</option><option>off</option></select></label>
-  <label>Logs (entrada/saída): <select id="logs"><option>on</option><option>off</option></select></label>
-  <label>Música: <select id="music"><option>on</option><option>off</option></select></label>
-  <button type="submit">Salvar pra todos</button>
-</form>
-<script>
-const data=JSON.parse(localStorage.getItem('lilyData')||'{}');
-if(!data.user) location.href='index.html';
-document.querySelector('form').onsubmit = e=>{
-  e.preventDefault();
-  alert('Config salva globalmente!');
-};
-</script>
-</body></html>
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuração - Lily Bot</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #2c2f33;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .guild-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .guild-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .settings-section {
+            background-color: #36393f;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #7289da;
+        }
+        .btn {
+            background-color: #7289da;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #677bc4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="guild-info">
+            <img id="guild-icon" src="" class="guild-icon" alt="Servidor">
+            <h1 id="guild-name">Configuração do Servidor</h1>
+        </div>
+        
+        <div class="settings-section">
+            <h2>Mensagens de Boas-vindas</h2>
+            <textarea id="welcome-message" rows="4" style="width: 100%; background-color: #40444b; color: white; border: none; padding: 10px; border-radius: 4px;"></textarea>
+            <button class="btn" onclick="saveSettings()">Salvar Configurações</button>
+        </div>
+        
+        <div class="settings-section">
+            <h2>Sistema de Tickets</h2>
+            <label>
+                <input type="checkbox" id="enable-tickets"> Ativar sistema de tickets
+            </label>
+            <div id="ticket-settings" style="margin-top: 15px; display: none;">
+                <input type="text" id="ticket-category" placeholder="ID da Categoria para Tickets" style="width: 100%; padding: 8px; background-color: #40444b; color: white; border: none; border-radius: 4px;">
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Aqui você adicionaria a lógica para carregar as configurações do servidor
+        document.getElementById('enable-tickets').addEventListener('change', function() {
+            document.getElementById('ticket-settings').style.display = this.checked ? 'block' : 'none';
+        });
+        
+        function saveSettings() {
+            // Lógica para salvar as configurações
+            alert('Configurações salvas!');
+        }
+    </script>
+</body>
+</html>
